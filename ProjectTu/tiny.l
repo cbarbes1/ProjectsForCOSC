@@ -1,0 +1,67 @@
+%option yylineno
+%option noyywrap
+
+%{
+  #define DEBUG 1
+  typedef YYTOKENTYPE Token;
+  Token scanned(Token t);
+%}
+
+digit	[0-9]
+label	"#"[a-zA-Z0-9]
+wspace	[ \t\r\n]+
+
+%%
+
+{digit}       { return scanned(NUM); }
+{label}     { return scanned(ID); }
+"if"        { return scanned(IF); }
+"then"      { return scanned(THEN); }
+"else"      { return scanned(ELSE); }
+"repeat"    { return scanned(REPEAT); }
+"until"     { return scanned(UNTIL); }
+"read"      { return scanned(READ); }
+"write"     { return scanned(WRITE); }
+":="        { return scanned(ASSIGN); } 
+"<"         { return scanned(LT); }
+"="         { return scanned(EQ); }
+"+"         { return scanned(PLUS); }
+"-"         { return scanned(MINUS); }
+"*"         { return scanned(TIMES); }
+"("         { return scanned(LPAREN); }
+")"         { return scanned(RPAREN); } 
+";"         { return scanned(SEMI); }
+{wspace}   { /*skip whitespace*/ }
+<<EOF>>    {return scanned(ENDFILE);}
+.          { if(DEBUG) printf("\n");
+             printf("Lex error on line %d: Illegal character %s\n",
+                    yylineno,yytext);
+             exit(-1);
+           }
+%%
+
+Token scanned(Token t) {
+    if(DEBUG==1) return t; 
+    switch(t){
+        case NUM: printf("NUM(%s)", yytext); return t;
+        case ID: printf("ID(%s)", yytext); return t;
+        case IF: printf("IF"); return t;
+        case THEN: printf("THEN");return t;
+        case ELSE: printf("ELSE");return t;
+        case REPEAT: printf("REPEAT");return t;
+        case UNTIL: printf("UNTIL");return t;
+        case READ: printf("READ");return t;
+        case WRITE: printf("WRITE");return t;
+        case ASSIGN: printf("ASSIGN");return t;
+        case LT: printf("LT");return t;
+        case EQ: printf("EQ");return t;
+        case PLUS: printf("PLUS");return t;
+        case MINUS: printf("MINUS");return t;
+        case TIMES: printf("TIMES");return t;
+        case LPAREN: printf("LPAREN");return t;
+        case RPAREN: printf("RPAREN");return t;
+        case SEMI: printf("SEMI");return t;
+        case ENDFILE: printf("ENDFILE \n");
+        default: printf("ERROR: invalid token in scanned().\n"); exit(-1);
+    }
+}
