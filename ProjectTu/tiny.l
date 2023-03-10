@@ -1,3 +1,4 @@
+/* "I pledge my honor that I have not cheated, and will not cheat, on this assignment." Cole Barbes */
 %option yylineno
 %option noyywrap
 
@@ -51,11 +52,11 @@ write       { return scanned(WRITE); }
 Token scanned(Token t) {
     if(DEBUG==0) return t; 
     switch(t){
-        case ENDFILE: printf("ENDFILE "); 
+        case ENDFILE: printf("ENDFILE \n"); exit(-1); 
         case ERROR: printf("ERROR \n");
         case END: printf("END "); return t;
         case NUM: printf("NUM(%s) ", yytext); return t;
-        case ID: printf("ID(%s)", yytext); return t;
+        case ID: printf("ID(%s) ", yytext); return t;
         case IF: printf("IF "); return t;
         case THEN: printf("THEN ");return t;
         case ELSE: printf("ELSE ");return t;
