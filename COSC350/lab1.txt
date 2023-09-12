@@ -1,0 +1,62 @@
+Cole Barbes 
+Task 1: 
+	- /usr/include
+Task 2: 
+	- ../bin/ls
+Task 3: 
+	- a. u rw- g r-- o r--
+	  b. cbarbes1
+	  c. students
+	  d. yes
+	  e. students
+	- chmod u-rw foo
+	  chmod u+x foo
+	  chmod g-r+w foo
+	  chmod o+x
+	- I am in the group so the file deleted when I entered the command 
+	  rm foo
+	- chmod u+w
+	  rm foo
+Task 4:
+	- a: do not ignore entries starting with .
+	  l: use a long listing format
+	  R: list subdirectories recursively
+	- ls just prints the directories 
+	  ls -a prints all directories even hidden ones
+	- time - get time in seconds
+	- man - an interface to the system reference manuals
+Task 5:	
+	- /mnt/linuxlab/home/cbarbes1
+	- cd .. 
+	- /mnt/linuxlab/home
+	- drwxr-xr-x
+Task 6: 
+	- ELF 64-bit LSB pie executable
+	- foo: empty 
+	- ASCII text 
+	- directories
+Task 7: 
+	- head -n 5 ~/.bash_history
+	- tail ~/.bash_history
+Task 8: 
+	- cp ~/.bash_history ~/dotbashhistory
+	- read
+	- it overwrote it
+	- date same, time different, same permissions rw
+	- cp ~/.bash_history ~/dotbashhistory
+Task 9: 
+	- mv ~/dotbashhistory ~/dotbashhistory.old
+Task 10: 
+	- rm ~/dotbashhistory.old
+Task 11: 
+	- mkdir ~/Foo
+	- drwxr-xr-x
+	- cd Foo 
+	  mkdir bar
+Task 12:
+	- failed to remove 'Foo': Directory not empty 
+	- cd Foo 
+	  rmdir Bar
+	  cd ..
+	  rmdir Foo
+	- rm -f -R Foo

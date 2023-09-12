@@ -1,0 +1,37 @@
+Cole Barbes 
+
+Task 1:
+	1. Value of your PS1: ${debian_chroot:+($debian_chroot)}\u@\h:\w\$
+	File where it is set: .bashrc
+	2. Home - /mnt/linuxlab/home/cbarbes1
+	   HOSTNAME - hpcl1-3
+	   LD_LIRARY_PATH - *novalue
+	   LESS - *less
+	   MAIL
+	   MAN
+	   MORE
+	   PAGER
+	   PATH PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/		bin:~/bin:/usr/local/cuda/bin:/opt/hadoop-3.3.3/bin:/opt/hadoop-3.3.3/sbin:/opt/ompi/bin:/opt/pmix/bin
+	   PWD /mnt/linuxlab/home/cbarbes1
+	   SHELL /bin/bash
+	   TERM xterm-256color
+	   USER cbarbes1
+Task 2:
+	1. echo $PS1
+	   tmp=$PS1
+	2. mkdir basecwd
+	   cd basecwd
+	   PS1="\[[COSC350 \w\]]
+	3. PS1=$tmp
+Task 4:
+	1. ls nosuchcommand 2>bar
+	2. ls nosuchcommand 2>/dev/null
+	3. echo -e 3\\n5\\n2\\n1 >> foo
+	4. cat foo>>bar
+	5. sort < foo : yes sorted numerically
+	6. sort < foo > bar
+Task 5:
+	1. I created a script which uses a bash for loop in a sequence from 1 to 100. 
+	and echoed the i value into the file line by line
+	2.
+
