@@ -6,11 +6,11 @@ Task 1:
 	2. Home - /mnt/linuxlab/home/cbarbes1
 	   HOSTNAME - hpcl1-3
 	   LD_LIRARY_PATH - *novalue
-	   LESS - *less
-	   MAIL
-	   MAN
-	   MORE
-	   PAGER
+	   LESS - *novalue
+	   MAIL - *novalue
+	   MAN - *novalue
+	   MORE - *novalue
+	   PAGER - *novalue
 	   PATH PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/		bin:~/bin:/usr/local/cuda/bin:/opt/hadoop-3.3.3/bin:/opt/hadoop-3.3.3/sbin:/opt/ompi/bin:/opt/pmix/bin
 	   PWD /mnt/linuxlab/home/cbarbes1
 	   SHELL /bin/bash
@@ -31,7 +31,9 @@ Task 4:
 	5. sort < foo : yes sorted numerically
 	6. sort < foo > bar
 Task 5:
-	1. I created a script which uses a bash for loop in a sequence from 1 to 100. 
-	and echoed the i value into the file line by line
-	2.
-
+	1. I created a script which uses a bash for loop in a sequence from 1 to 100 and echoed the i value into the file line by line
+	2. 200 100 392 numbs 
+	200 - number of lines 100 - number of words 392 - byte count numbs - file name
+	3. cat -n numbs | head -n 38 | tail -n 14 >> somenumbs
+	   cat somenumbs
+	4. 14  21 126 somenumbs 14 - number of lines 21 - word count 126 - number of bytes somenumbs - filename
