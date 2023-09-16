@@ -4,6 +4,7 @@
 echo "Please enter the Base size of the Diamond"
 read base
 
+# function to print the diamond out with the desired width
 printStars()
 {
 	local t=$1
@@ -12,6 +13,7 @@ printStars()
 	local midpoint=$mid
 	star="*"
 	stars="*"
+
 	for i in $(seq 1 `expr $t - 1`); 
 	do
 		printf '%*s\n' $mid "$stars"	
