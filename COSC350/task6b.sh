@@ -9,18 +9,25 @@ read base
 printStars()
 {
         local t=$2
-	head -c $1 < /dev/zero | tr '\0' '\52' > tailstr 
+	local tailstr="*"
+	star="*"
+
+	for i in $(seq 1 `expr $1 - 1`); 
+	do 
+		tailstr="${tailstr}$star" 
+	done
+
         local mid=`expr $t / 2`
         let mid++
         local midpoint=$mid
-        star="*"
         stars="*"	
         for i in $(seq 1 `expr $t - 1`); 
         do
-		if [ $i = t ]; then
-			stars="${stars}$tailstr"
+		if [ $i = $midpoint ]; then
+                	printf '%*s\n' $t "$stars$tailstr"
+		else
+                	printf '%*s\n' $t "$stars"
 		fi
-                printf '%*s\n' $t "$stars"
 		if [ $i -lt $midpoint ]; then
                         stars="${stars}$star$star"
                 else
