@@ -3,6 +3,13 @@
 #
 #
 
+# check to make sure the correct format was used
+if [ $# < 1 ]; 
+then
+	echo "The Format for this script is ./task7.sh <numerical value>"
+	exit 1
+fi
+
 # save the argument in a variable 
 result=$1
 # save the first factorial multiple

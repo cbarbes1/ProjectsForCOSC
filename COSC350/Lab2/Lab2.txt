@@ -31,7 +31,8 @@ Task 4:
 	5. sort < foo : yes sorted numerically
 	6. sort < foo > bar
 Task 5:
-	1. I created a script which uses a bash for loop in a sequence from 1 to 100 and echoed the i value into the file line by line
+	1. Script Included I created a script which uses a bash for loop in a sequence 
+	from 1 to 100 and echoed the i value into the file line by line
 	2. 200 100 392 numbs 
 	200 - number of lines 100 - number of words 392 - byte count numbs - file name
 	3. cat -n numbs | head -n 38 | tail -n 14 >> somenumbs

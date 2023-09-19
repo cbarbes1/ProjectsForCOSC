@@ -1,10 +1,5 @@
 #!/bin/bash 
 # This shell script implements a function to Display a diamond of a particular width onto the console using input verification
-echo "Please enter the tail size of the tail"
-read tail
-
-echo "Please enter the Base size of the Diamond"
-read base
 
 printStars()
 {
@@ -39,13 +34,13 @@ printStars()
 }
                 
         
-if [ -z $base ]; then
+if [ -z $2 ]; then
         echo "no input"
         exit 1
-elif [ $base -gt 3 ]; then
-        x=`expr $base % 2`
+elif [ $2 -gt 3 ]; then
+        x=`expr $2 % 2`
         if [ $x = 1 ]; then
-                printStars $tail $base
+                printStars $1 $2
         fi
 fi
 
