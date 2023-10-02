@@ -18,7 +18,7 @@ int main()
 	// file descriptors and buffer 
 	int indes, outdes;
 	char buffer;
-
+	umask(0);
 	indes = open("foo", O_RDONLY);  // open the input file for read only
 	outdes = open("clone1", O_RDWR | O_CREAT, FILE_MODE);// open output file rw-rw-rw-
 

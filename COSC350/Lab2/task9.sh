@@ -6,12 +6,19 @@
 echo "Please enter the directory in which to find the file"
 read nm_dir
 
+if [ ${nm_dir:0:2} = "~/" ];
+then
+	nm_dir=$HOME${nm_dir:1}
+	cd $nm_dir
+fi
+
 # if the directory does not exit terminate with error message
 if [ ! -d $nm_dir ]; then
 	echo "Directory does not exist"
 	exit 1
 fi
 
+cd $nm_dir
 # Ask the user for the name of the file
 echo "Please enter the name of the file"
 read fl_name

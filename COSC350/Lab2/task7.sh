@@ -4,7 +4,7 @@
 #
 
 # check to make sure the correct format was used
-if [ $# < 1 ]; 
+if [ $# -lt 1 ]; 
 then
 	echo "The Format for this script is ./task7.sh <numerical value>"
 	exit 1
