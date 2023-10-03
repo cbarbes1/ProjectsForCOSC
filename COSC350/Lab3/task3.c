@@ -14,7 +14,7 @@ void err_sys(char *str)
 	exit(1);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	// file descriptors, error check variable, and buffer
 	int indes, outdes, nread;
@@ -22,12 +22,12 @@ int main()
 
 	umask(0);// reset the umask
 
-	indes = open("foo", O_RDONLY); // open the foo file for rd
+	indes = open(argv[1], O_RDONLY); // open the foo file for rd
 	
-	if(access("clone2", F_OK) == 0)
+	if(access(argv[2], F_OK) == 0)
 		err_sys("The file clone2 already exists");
 
-	outdes = open("clone2", O_RDWR | O_CREAT, FILE_MODE);// open the clone2 output file
+	outdes = open(argv[2], O_RDWR | O_CREAT, FILE_MODE);// open the clone2 output file
 
 	//check if the file open failed
 	if(indes == -1 || outdes == -1)

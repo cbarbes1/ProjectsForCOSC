@@ -47,6 +47,9 @@ int main(int argc, char *argv[])
 		if(buffer == '\n'){ // if endline end the line
 			printf("\n");
 		}
+		else if(buffer == '\t'){
+			printf("\t");
+		}
 		else{
 			result = result*10 + (buffer - '0');
 		}	

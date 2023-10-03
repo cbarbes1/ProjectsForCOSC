@@ -15,7 +15,7 @@ void err_sys(char *str)
 	exit(1);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	int indes1, indes2, outdes, nread; // variables to hold descriptors 
 	char buffer[BUFFER_SIZE];// create the buffer of size BUFFER_SIZE
@@ -23,15 +23,14 @@ int main()
 	umask(0);// reset the mask
 
 	// open the needed files for reading only
-	indes1 = open("foo", O_RDONLY);
-	indes2 = open("foo1", O_RDONLY);
+	indes1 = open(argv[1], O_RDONLY);
+	indes2 = open(argv[2], O_RDONLY);
 
-	// make sure file exists before attempting to create
-	if(access("foo12", F_OK) == 0)
-		err_sys("File foo12 already exists");
+	if(access(argv[3], F_OK) ==0)
+		chmod(argv[3], FILE_MODE);
 
 	// open the file to append
-	outdes = open("foo12", O_WRONLY|O_APPEND|O_CREAT, FILE_MODE);
+	outdes = open(argv[3], O_WRONLY|O_CREAT, FILE_MODE);
 
 	// if the descriptors are errors exit
 	if(indes1 == -1 || indes2 == -1 || outdes == -1)

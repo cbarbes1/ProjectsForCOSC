@@ -15,18 +15,18 @@ void err_sys(char *str)
 	exit(1);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	int indes, outdes, offset; //create vars to hold the file descriptors and the offset
 	char buffer[BUFFER_SIZE]; // create the buffer
 
-	indes = open("foo", O_RDONLY); // open the file with read only
+	indes = open(argv[1], O_RDONLY); // open the file with read only
 
 	// if the file exists exit
-	if(access("foorev", F_OK) == 0)
+	if(access(argv[2], F_OK) == 0)
 		err_sys("The file already exists");
 
-	outdes = open("foorev", O_WRONLY|O_CREAT, FILE_MODE);// open the file for write only
+	outdes = open(argv[2], O_WRONLY|O_CREAT, FILE_MODE);// open the file for write only
 
 	// if the descriptors are error then exit the prog
 	if(indes == -1 || outdes == -1)
@@ -36,6 +36,7 @@ int main()
 	if((offset=lseek(indes, 0, SEEK_END)) == -1)
 		err_sys("Seek Error");
 
+
 	// set the offset to just before the end
 	offset-=2;
 
@@ -44,8 +45,10 @@ int main()
 		if(pread(indes, &buffer, BUFFER_SIZE, offset)<0)// pread does the lseek before reading
 			err_sys("read error");
 
-		if(write(outdes, &buffer, BUFFER_SIZE)<0)// write the byte to the file
-			err_sys("write error");
+		if(*buffer != '\n'){
+			if(write(outdes, &buffer, BUFFER_SIZE)<0)// write the byte to the file
+				err_sys("write error");
+		}
 
 		offset--;// decrement the offset
 	}
