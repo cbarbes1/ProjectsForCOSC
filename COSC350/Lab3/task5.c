@@ -45,10 +45,12 @@ int main()
 		if(lseek(indes, offset, SEEK_SET) == -1)
 			err_sys("Seek Error");
 
-		read(indes, &buffer, BUFFER_SIZE);// read the next bit
+		if(read(indes, &buffer, BUFFER_SIZE)<0)// read the next bit
+			err_sys("read error");
 
-		write(outdes, &buffer, BUFFER_SIZE);// write the bit to the output
-		
+		if(write(outdes, &buffer, BUFFER_SIZE)<0)// write the bit to the output
+			err_sys("write error");
+
 		offset--;// decrement the offset to shift closer to the beginning of the file
 	}
 

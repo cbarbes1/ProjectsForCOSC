@@ -11,7 +11,7 @@
 // error printer
 void err_sys(char *str)
 {
-	printf("%s", str);
+	printf("%s\n", str);
 	exit(1);
 }
 
@@ -41,10 +41,12 @@ int main()
 
 	while(offset>-1){// if the offset reaches below zero done
 
-		pread(indes, &buffer, BUFFER_SIZE, offset);// pread does the lseek before reading
+		if(pread(indes, &buffer, BUFFER_SIZE, offset)<0)// pread does the lseek before reading
+			err_sys("read error");
 
-		write(outdes, &buffer, BUFFER_SIZE);// write the byte to the file
-		
+		if(write(outdes, &buffer, BUFFER_SIZE)<0)// write the byte to the file
+			err_sys("write error");
+
 		offset--;// decrement the offset
 	}
 
