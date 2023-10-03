@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// convert a c-string
 int toInteger(char *str){
 	while(*str == ' ' || *str == '\t')
 		str++;

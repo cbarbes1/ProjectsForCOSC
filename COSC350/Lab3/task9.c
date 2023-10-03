@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	int result = 0;
 
 	indes = open(argv[1], O_RDONLY); 
-	outdes = open(argv[2], O_RDWR | O_CREAT, FILE_MODE);
+	outdes = open(argv[2], O_WRONLY | O_CREAT, FILE_MODE);
 
 	if(indes == -1 || outdes == -1)
 		err_sys("File Open Error");
@@ -32,14 +32,17 @@ int main(int argc, char *argv[])
 	}	
 
 	while(read(indes, &buffer, 1) == 1){
+		if(buffer == '\n'){
+			printf("\n");
+		}
+		else{
+			result = result*10 + (buffer - '0');
+		}	
 		if(result >= 32 && result <= 126){
 			printf("%c", result);
 			result = 0;
 		}
-		result = result*10 + (buffer - '0');
 	}
-
-	printf("\n");
 
 	dup2(STDOUT_FILENO, outdes);
 
