@@ -15,19 +15,19 @@ void err_sys(char *str)
 	exit(1);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	int indes, outdes, offset; // vars to hold the descriptors and the offset
 	char buffer[BUFFER_SIZE]; // create the buffer of size BUFFER_SIZE
 
-	indes = open("foo", O_RDONLY); // open the file foo for reading only
+	indes = open(argv[1], O_RDONLY); // open the file foo for reading only
 
 	// if the file already exist exit the program since it could be an important file
-	if(access("foorev", F_OK) == 0)
-		err_sys("File foorev already exists delete the file or change the name");
+	if(access(argv[2], F_OK) == 0)
+		err_sys("Output File already exists delete the file or change the name");
 
 	// open the file foorev for write only 
-	outdes = open("foorev", O_WRONLY|O_CREAT, FILE_MODE);
+	outdes = open(argv[2], O_WRONLY|O_CREAT, FILE_MODE);
 
 	// if the descriptors are errors then exit the program
 	if(indes == -1 || outdes == -1)

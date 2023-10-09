@@ -47,6 +47,8 @@ int main(int argc, char *argv[])
 		// if the buffer is an end line printf the endline 
 		if(buffer == '\n')
 			printf("\n");
+		else if(buffer == '\t')
+			printf("\t");
 		else 
 			printf("%d", buffer);
 	}

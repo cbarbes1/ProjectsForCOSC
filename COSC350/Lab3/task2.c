@@ -13,7 +13,7 @@ void err_sys(char *str)
 	exit(1);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	// file descriptors and buffer 
 	int indes, outdes, nbyte;
@@ -21,10 +21,10 @@ int main()
 
 	umask(0);// reset the mask
 
-	indes = open("foo", O_RDONLY);  // open the input file for read only
+	indes = open(argv[1], O_RDONLY);  // open the input file for read only
 	
 	// check and make sure the file doesn't exist
-	if(access("clone1", F_OK) == 0)
+	if(access(argv[2], F_OK) == 0)
 		err_sys("File clone1 already exists");
 
 	outdes = open("clone1", O_RDWR | O_CREAT, FILE_MODE);// open output file rw-rw-rw-
