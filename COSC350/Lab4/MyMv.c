@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
 	if(*(argv[2]) == '~'){
 		shiftStr(argv[2]);
 		snprintf(path, MAXLENGTH, "%s%s", home_dir, argv[2]);
+		printf("%s\n", path);
 	}
 	else{
 		snprintf(path, MAXLENGTH, "%s", argv[2]);
@@ -51,7 +52,7 @@ int main(int argc, char *argv[])
 		if(link(argv[1], path) < 0 )
 			err_sys("Error in link");
 		if(unlink(argv[1])<0)
-			err_sys("Error in unlink"):
+			err_sys("Error in unlink");
 	}
 	else{
 		if(S_ISDIR(buf.st_mode)){// if directory link up the path
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
 		else if(S_ISREG(buf.st_mode)){// if the file is a text file 
 			if(link(argv[1], path)<0)
 				err_sys("Error in link");
-			if(link(argv[1]) < 0)
+			if(unlink(argv[1]) < 0)
 				err_sys("Error in unlink");
 		}
 	}
