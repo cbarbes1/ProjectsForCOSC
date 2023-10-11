@@ -32,6 +32,8 @@ int main(int argc, char *argv[])
 	char *home_dir = getenv("HOME");
 	char path[MAXLENGTH];
 	char filePath[MAXLENGTH];
+	char special[2] = "~/";
+
 
 	// if there is a ~/ change to the path
 	if(*(argv[2]) == '~'){
@@ -39,6 +41,8 @@ int main(int argc, char *argv[])
 		snprintf(path, MAXLENGTH, "%s%s", home_dir, argv[2]);
 		printf("%s\n", path);
 	}
+	else if(argv[2] == special){
+		snprintf(path
 	else{
 		snprintf(path, MAXLENGTH, "%s", argv[2]);
 	}
