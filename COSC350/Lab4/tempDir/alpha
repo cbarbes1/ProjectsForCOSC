@@ -1,0 +1,137 @@
+ include  unistd h 
+ include  fcntl h 
+ include  ctype h 
+ include  stdio h 
+ include  string h 
+ include  stdlib h 
+
+void err sys char  str 
+ 
+	printf   s n   str  
+	exit    
+ 
+
+   simple convertion function from string to integer
+int myAtoi char  str 
+ 
+	int sign     
+	int result     
+
+	   account for spaces
+	while  str        
+		str   
+
+	  if   change the sign and increment the pointer
+	if  str         
+		sign      
+		str   
+	 
+	else if  str         
+		str   
+	 
+
+	  while the pointer contains a digit
+	while  str           str         
+		result  result        str        
+		str   
+	 
+
+	  find sign
+	result result sign 
+
+	   return the finished product
+	return result 
+
+ 
+
+   convert an integer to a character
+char  myitoa int val  char  strResult 
+ 
+	int sign     
+	int temp   val 
+	int count     
+	   if the number is negative save that it is and make it positive
+	if val    
+		sign     
+		val    val 
+	 
+
+	if val       
+		 strResult       
+		strResult   
+		 strResult        
+		return strResult 
+	 
+
+	   find the length of the string
+	while temp      
+		count   
+		temp     
+	 
+
+	   make temp string with null terminator in the beginning
+	int i   count   sign 
+	strResult i         
+
+	  convert the digits 
+	do 
+		i   
+		strResult i    val            
+		val     
+	 while val    
+
+	if sign      
+		strResult i          
+	 
+
+	return strResult 
+ 
+
+
+
+int main int argc  char  argv   
+ 
+	  check if there is enough arguments
+	if argc      
+		err sys  Insufficient Arguments    
+
+	   integer vars for later u
+	int indes  nread  result      numAcc     
+	   create a buffer and a c string
+	char buffer 
+	char number     
+
+	char number      
+
+	   open the file check for errors
+	if  indes open argv     O RDONLY              
+		err sys  File Open Error    
+
+	
+	   loop through the file saving only numerical values
+	while  nread read indes   buffer          
+		if buffer           buffer        
+			number numAcc    buffer 
+			numAcc   
+		 
+	 
+
+	
+	   exit with errors if there was a read error
+	if nread   
+		err sys  Read Error   
+
+	   convert to an integer
+	result myAtoi number  
+	result result    
+	  convert back to a string
+	myitoa result  number   
+
+	   write the string to standard out
+	if write     number   strlen number          
+		err sys  Write Error   
+
+	printf   Result as an integer   d n   result  
+
+	return   
+ 

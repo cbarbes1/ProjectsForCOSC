@@ -16,8 +16,9 @@ void err_sys(char *str)
 char* shiftStr(char *str)
 {
 	// starting from the left shift each postion so pos 0 becomes pos 1 etc.
-	for(int i = 1; str[i] != '\0'; i++){
-		str[i-1] = str[i];
+	while(*str != '\0'){
+		*str = *(str+1);
+		str++;
 	}
 	return str;
 }
@@ -41,8 +42,6 @@ int main(int argc, char *argv[])
 		snprintf(path, MAXLENGTH, "%s%s", home_dir, argv[2]);
 		printf("%s\n", path);
 	}
-	else if(argv[2] == special){
-		snprintf(path
 	else{
 		snprintf(path, MAXLENGTH, "%s", argv[2]);
 	}
