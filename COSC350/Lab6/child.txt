@@ -1,1 +1,66 @@
-dfgfsd
+
+#i/lpnt <iedion.hit#iile  , <stdiOR./cetnbfedvr<n niodpt>ecinol
+ude<hc ul
+hn
+oidscl et<ssy tfpts .h
+
+#/ccucet<tyh/itutfhe
+pne oretB
+FfEn_sI=E)
+	ris (ri_ pe(oh)
+r pt_)p{;
+	prin/(fos ne,rser
+;i	=fik(;;;/
+i/c litpnepf nethod teo h(ik= ifa	c(ordc=re(shaddxg,t_iOtYi DCgAt (charb<))
+
+erst(oenuat"=
+; 	 /rn hnhpr asnafneume(it!e) rtfro dr=p	(prbtfx<,O'R'L&| _uET>= ') 	)reuet_=s;p	 /ii)
+ caekisen t e  Em_Er; te hret hn saedeo	 htur hrfseln;p}a
+tn umei hi o vrdca  hnrt*narvie)edi	ef aug UF=_)Z	>	err	y(i"=n)f/iiicnrnAygnmh hl"t;n
+au nsh(nn)mr	 h sopnit!eDfilb )i|eu
+=i't'ii	ew t opdsn(rbv,),,	_sD(NdY,;fs/,cEe_tT 
+	fle  v f ann t eunputrd sarr	tfrs
+gc(u) |uu;=	'nt
+o	tree,tosuteb,  off	ts=k;d
+,o/sc,eEk_Eh;at	hh	ifptt;f
+l
+e ocnsdicer;recls
+uie((;ndso=(u-e));		ertsnss
+FFile open error");
+
+	pid_t pid;
+
+	// fork the process
+	pid = fork();
+
+	// if child then open the child file
+	if(pid == )
+		if((outdes=open("child.txt", O_WRONLY | O_CREAT, )) < )
+			err_sys("open fail");
+	// if parent then open parent file
+	if(pid != )
+		if((outdes=open("parent.txt", O_WRONLY | O_CREAT, )) < )
+			err_sys("open fail");
+
+	lseek(indes, offset, SEEK_SET);
+	// while a char is read loop through the file and pread the current char to avoid race condition
+	while(read(indes, &buf, BUFFER_SIZE)>){
+		if(pid == ){ // if currently on the child then take in the non numeric chars
+			if(!isDigit(buf) || buf == '\n')
+				write(outdes, &buf, );
+			lseek(indes, offset, SEEK_SET);
+		}else { // if parent take in numeric char
+			if(isDigit(buf) || buf == '\n')
+				write(outdes, &buf, );
+			lseek(indes, offset, SEEK_SET);
+		}
+		offset++;		
+	}
+
+
+	close(indes);
+	close(outdes);
+	close(outdes);
+
+	return ;
+}

@@ -39,28 +39,33 @@ int main(int argc, char *argv[])
 	if(indes == -1)
 		err_sys("File open error");
 
-	// create the file for the parent process
-	if((outdes1=open("parent.txt", O_WRONLY | O_CREAT, 0777)) < 0)
-		err_sys("Open Fail");
-	// create the file for the child process
-	if((outdes2=open("child.txt", O_WRONLY | O_CREAT, 0777)) < 0)
-		err_sys("Open Fail");
-
 	pid_t pid;
 
 	// fork the process
 	pid = fork();
 
+	// if child then open the child file
+	if(pid == 0)
+		if((outdes2=open("child.txt", O_WRONLY | O_CREAT, 0777)) < 0)
+			err_sys("open fail");
+	// if parent then open parent file
+	if(pid != 0)
+		if((outdes1=open("parent.txt", O_WRONLY | O_CREAT, 0777)) < 0)
+			err_sys("open fail");
+
+	lseek(indes, offset, SEEK_SET);
 	// while a char is read loop through the file and pread the current char to avoid race condition
-	while(pread(indes, &buf, BUFFER_SIZE, offset)>0){
+	while(read(indes, &buf, BUFFER_SIZE)>0){
 		if(pid == 0){ // if currently on the child then take in the non numeric chars
 			if(!isDigit(buf) || buf == '\n')
 				write(outdes2, &buf, 1);
+			lseek(indes, offset, SEEK_SET);
 		}else { // if parent take in numeric char
 			if(isDigit(buf) || buf == '\n')
 				write(outdes1, &buf, 1);
+			lseek(indes, offset, SEEK_SET);
 		}
-		offset++;
+		offset++;		
 	}
 
 

@@ -5,6 +5,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+int st_to_int(char *str)
+{
+	int result = 0;
+	while(*str != '\0'){
+		result = result*10 + (*str - '0');
+		str++;
+	}
+	return result;
+}
+
 void err_sys(char *str)
 {
 	printf("%s\n", str);
@@ -22,8 +32,8 @@ int main(int argc, char *argv[])
 	int exit_code;
 
 	// convert the strings to integers and save them in the appropriate place
-	int n = atoi(argv[2]);
-	int t = atoi(argv[4]);
+	int n = st_to_int(argv[2]);
+	int t = st_to_int(argv[4]);
 
 
 	// print prompt
@@ -49,12 +59,6 @@ int main(int argc, char *argv[])
 	}
 
 	if(pid != 0){
-		// print the messages
-		for(; n>0; n--) {
-			printf("%s PID = %d\n", message, ppid);
-			sleep(t);
-		}
-
 		int stat_val;
 		pid_t child_pid;
 		// wait for the child to complete and grab the pid
@@ -67,6 +71,12 @@ int main(int argc, char *argv[])
 			printf("Child exited with code %d\n", WEXITSTATUS(stat_val));
 		else 
 			printf("Child terminated abnormally\n");
+	}
+
+	// print the message
+	for(; n>0; n--) {
+		printf("%s PID = %d\n", message, ppid);
+		sleep(t);
 	}
 
 

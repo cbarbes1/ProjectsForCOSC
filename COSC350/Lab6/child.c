@@ -4,6 +4,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int st_to_int(char *str)
+{
+	int result = 0;
+	while(*str!='\0'){
+		result = result*10 + (*str-'0');
+		str++;
+	}
+	return result;
+}
+
 void err_sys(char *str)
 {
 	printf("%s\n", str);
@@ -16,8 +26,8 @@ int main(int argc, char *argv[])
 	if(argc !=4)
 		err_sys("Insufficient Arguments");
 	// convert the strings to integers and save them in the appropriate place
-	int nc = atoi(argv[2]);
-	int tc = atoi(argv[3]);
+	int nc = st_to_int(argv[2]);
+	int tc = st_to_int(argv[3]);
 	
 	// print the messages
 	for(; nc>0; nc--) {
