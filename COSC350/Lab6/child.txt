@@ -1,32 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#define BUFFER_SIZE 
 
-#i/lpnt <iedion.hit#iile  , <stdiOR./cetnbfedvr<n niodpt>ecinol
-ude<hc ul
-hn
-oidscl et<ssy tfpts .h
+void err_sys(char *str)
+{
+	printf("%s\n", str);
+	exit();
+}
 
-#/ccucet<tyh/itutfhe
-pne oretB
-FfEn_sI=E)
-	ris (ri_ pe(oh)
-r pt_)p{;
-	prin/(fos ne,rser
-;i	=fik(;;;/
-i/c litpnepf nethod teo h(ik= ifa	c(ordc=re(shaddxg,t_iOtYi DCgAt (charb<))
+// simple function to check if a character is a digit
+int isDigit(char buf)
+{
+	int result = ;
+	// if char is a number then return true
+	if(buf <= '' && buf >= '')
+		result = ;
+	// if char is not a number then return false
+	return result;
+}
 
-erst(oenuat"=
-; 	 /rn hnhpr asnafneume(it!e) rtfro dr=p	(prbtfx<,O'R'L&| _uET>= ') 	)reuet_=s;p	 /ii)
- caekisen t e  Em_Er; te hret hn saedeo	 htur hrfseln;p}a
-tn umei hi o vrdca  hnrt*narvie)edi	ef aug UF=_)Z	>	err	y(i"=n)f/iiicnrnAygnmh hl"t;n
-au nsh(nn)mr	 h sopnit!eDfilb )i|eu
-=i't'ii	ew t opdsn(rbv,),,	_sD(NdY,;fs/,cEe_tT 
-	fle  v f ann t eunputrd sarr	tfrs
-gc(u) |uu;=	'nt
-o	tree,tosuteb,  off	ts=k;d
-,o/sc,eEk_Eh;at	hh	ifptt;f
-l
-e ocnsdicer;recls
-uie((;ndso=(u-e));		ertsnss
-FFile open error");
+int main(int argc, char *argv[])
+{
+	if(argc !=)
+		err_sys("Insufficient Arguments");
+
+	umask();
+	// open the file given
+	int indes = open(argv[], O_RDONLY);
+	//create buffer var and  output descriptors
+	char buf;
+	int outdes, outdes, offset = ;
+
+	// check that the input file opened correctly
+	if(indes == -)
+		err_sys("File open error");
 
 	pid_t pid;
 
@@ -42,19 +53,18 @@ FFile open error");
 		if((outdes=open("parent.txt", O_WRONLY | O_CREAT, )) < )
 			err_sys("open fail");
 
-	lseek(indes, offset, SEEK_SET);
+	
 	// while a char is read loop through the file and pread the current char to avoid race condition
-	while(read(indes, &buf, BUFFER_SIZE)>){
+	while(pread(indes, &buf, BUFFER_SIZE, offset)>){
 		if(pid == ){ // if currently on the child then take in the non numeric chars
 			if(!isDigit(buf) || buf == '\n')
 				write(outdes, &buf, );
-			lseek(indes, offset, SEEK_SET);
+			
 		}else { // if parent take in numeric char
 			if(isDigit(buf) || buf == '\n')
-				write(outdes, &buf, );
-			lseek(indes, offset, SEEK_SET);
+				write(outdes, &buf, );	
 		}
-		offset++;		
+		offset++;
 	}
 
 

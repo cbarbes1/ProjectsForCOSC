@@ -53,19 +53,18 @@ int main(int argc, char *argv[])
 		if((outdes1=open("parent.txt", O_WRONLY | O_CREAT, 0777)) < 0)
 			err_sys("open fail");
 
-	lseek(indes, offset, SEEK_SET);
+	
 	// while a char is read loop through the file and pread the current char to avoid race condition
-	while(read(indes, &buf, BUFFER_SIZE)>0){
+	while(pread(indes, &buf, BUFFER_SIZE, offset)>0){
 		if(pid == 0){ // if currently on the child then take in the non numeric chars
 			if(!isDigit(buf) || buf == '\n')
 				write(outdes2, &buf, 1);
-			lseek(indes, offset, SEEK_SET);
+			
 		}else { // if parent take in numeric char
 			if(isDigit(buf) || buf == '\n')
-				write(outdes1, &buf, 1);
-			lseek(indes, offset, SEEK_SET);
+				write(outdes1, &buf, 1);	
 		}
-		offset++;		
+		offset++;
 	}
 
 
