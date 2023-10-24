@@ -57,12 +57,14 @@ int main(int argc, char *argv[])
 		sleep(ns);
 	}
 
-	if(pid !=0) {
+	if(pid !=0) { // if in the parent perform the wait
 		int stat_val;
 		pid_t child_pid;
 
+		// wait for the child to complete
 		child_pid = wait(&stat_val);
 
+		// print the pid 
 		printf("Child has finished: PID = %d\n", child_pid);
 		if(WIFEXITED(stat_val))
 			printf("Child exited with code %d\n", WEXITSTATUS(stat_val));

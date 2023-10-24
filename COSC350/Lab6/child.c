@@ -15,8 +15,6 @@ int main(int argc, char *argv[])
 	// make sure there is sufficient arguments
 	if(argc !=4)
 		err_sys("Insufficient Arguments");
-	
-	printf("In child process");
 	// convert the strings to integers and save them in the appropriate place
 	int nc = atoi(argv[2]);
 	int tc = atoi(argv[3]);
@@ -27,5 +25,5 @@ int main(int argc, char *argv[])
 		sleep(tc);
 	}
 
-	exit(0);
+	exit(37);
 }
