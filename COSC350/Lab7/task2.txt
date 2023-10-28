@@ -1,0 +1,2 @@
+./ctrlc2& to run in background, then kill 6220 to kill the process with the specific pid after calling ps to get the pid
+ kill -l seemed to output all signals that kill works with
