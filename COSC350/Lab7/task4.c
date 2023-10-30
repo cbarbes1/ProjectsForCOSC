@@ -32,6 +32,7 @@ int main()
 
 	// if in the parent then fork the second
 	if(pid != 0){ // parent process
+		waitpid(pid, 0, 0);
 		pidc = fork();
 	}
 
@@ -42,8 +43,7 @@ int main()
 		kill(getppid(), SIGUSR2);
 		exit(0);
 	}else {
-		waitpid(pid, 0, 0); // wait for the child
-		waitpid(pidc, 0, 0); // wait for the second child
+		waitpid(pidc, 0, 0); // wait for the child
 	}
 
 	return 0;
