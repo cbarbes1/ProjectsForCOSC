@@ -32,23 +32,27 @@ int main()
 		gpid = fork();// create the grandchild
 
 		if(gpid == 0){// if in grandchild then print 10 times
-			for(int i = 0; i<10; i++){
+			int i = 1;
+			pid_t cppid = getppid();
+			while(cppid == getppid()){
 				printf("Grandchild Process\n");
-				sleep(1);
+				i++;
+				//sleep(1);
+				if(i==10){
+					kill(getppid(), SIGUSR1);
+				}
 			}
-			kill(getppid(), SIGUSR1);
-			if(getppid() == 1)
-				exit(0);
+			abort();
 		}else{
 			while(1){
 				printf("Child Process\n");
-				sleep(1);
+				//sleep(1);
 			}
 		}
 	}else {
 		while(1){
 			printf("Parent Process\n");
-			sleep(1);
+			//sleep(1);
 		}
 	}
 
