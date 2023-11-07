@@ -3,9 +3,7 @@
 #include <pthread.h>
 #define NUMTHREADS 4
 #define NUMINTS 20
-
-pthread_mutex_t array_mutex = PTHREAD_MUTEX_INITIALIZER;
-int arr[NUMINTS];
+int *arr;
 int numscores;
 
 void err_sys(char *, int);
@@ -69,9 +67,7 @@ void *thread1(void *arg)
 		printf("Please enter an integer: ");
 		scanf("%d", &testscore);
 		if(testscore != -1){
-			pthread_mutex_lock(&array_mutex);
 			arr[i] = numscores;
-			pthread_mutex_unlock(&array_mutex);
 			numscores++;
 		}
 
@@ -82,14 +78,10 @@ void *thread1(void *arg)
 
 int findMedian()
 {
-	pthread_mutex_lock(&array_mutex);
 	int size = numscores;
-	pthread_mutex_unlock(&array_mutex);
 	int array[size];
 	for(int i = 0; i<size; i++){
-		pthread_mutex_lock(&array_mutex);
 		array[i] = arr[i];
-		pthread_mutex_unlock(&array_mutex);
 	}
 	for(int i = 1; i<size; i++){
 		int key = array[i]; // current elemtent to be inserted
@@ -110,13 +102,9 @@ void *thread2(void *arg)
 {
 	int average = 0;
 	int median = 0;
-	pthread_mutex_lock(&array_mutex);
 	int size = numscores;
-	pthread_mutex_unlock(&array_mutex);
 	for(int i = 0; i<size; i++){
-		pthread_mutex_lock(&array_mutex);
 		average += arr[i];
-		pthread_mutex_unlock(&array_mutex);
 	}
 	average /= size;
 	median = findMedian();
@@ -126,18 +114,14 @@ void *thread2(void *arg)
 
 void *thread3(void *arg)
 {
-	pthread_mutex_lock(&array_mutex);
 	int size = numscores;
-	pthread_mutex_unlock(&array_mutex);
 
 	int min = 0, max = 0;
 	for(int i = 1; i<size; i++){
-		pthread_mutex_lock(&array_mutex);
 		if(max < arr[i])
 			max = i;
 		if(min > arr[i])
 			min = i;
-		pthread_mutex_unlock(&array_mutex);
 	}
 	printf("Here are is the minimum: %d Here is the maximum: %d\n", arr[min], arr[max]);
 	pthread_exit(NULL);
