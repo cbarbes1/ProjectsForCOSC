@@ -57,14 +57,11 @@ int main()
 	  // // close the unused end of the pipe
 		close(filedes[1]);
 		//
-		char str1[256], str2[256];
 		while(read(filedes[0], &rline, MAXLINE) > 0)
 		{ // read until the EOF is reached in the file
-			if(sscanf(rline, "%s %s", &str1, &str2) ==2)
+			if(sscanf(rline, "%d %d", &int1, &int2) ==2)
 			{ // scan the string for 2 seperate strings seperated by a space
 			  // to int both
-				int1 = atoi(str1); 
-				int2 = atoi(str2);
 				// print result
 				sprintf(rline, "%d\n", int1 + int2);
 				// write to the std out and find out if error

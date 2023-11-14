@@ -20,7 +20,7 @@ int main()
 	pthread_t threads[NUMTHREADS];
 	int rc;
 	void *tret;
-	printf("Creating first Thread");
+	printf("Creating first Thread\n");
 	// create the first thread
 	if((rc=pthread_create(&threads[0], NULL, thread1, NULL))!=0)
 		err_sys("Error: return code from pthread_create() is", rc);
