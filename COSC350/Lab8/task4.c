@@ -29,28 +29,14 @@ int main()
 	else if(pid > 0){ // parent process
 		close(filedes[0]);
 		char tmp[256];
-		
-		while(1)
+		printf("submit two integers\n");
+		while(fgets(sline, MAXLINE, stdin)!=NULL)
 		{ // run forever until parent exits itself
-			printf("submit two integer, enter EOF to end: \n");
-			scanf("%s", &sline);
-			if(strcmp(sline, "EOF")==0){ // compare the input and see if it is an EOF
-				close(filedes[1]); // close the desciptor to cause EOF in child
-				exit(0); // exit the parent
-			}	
-			scanf("%s", &tmp);	
-			if(strcmp(tmp, "EOF")==0){ // compare the input and see if it is an EOF
-				close(filedes[1]); // close the descriptor to cause EOF
-				exit(0);// exit the prog
-			}
-			// print the 2 vars to the line string
-			sprintf(sline, "%s %s", sline, tmp);
+			printf("submit two integers\n");
 			// if error exit but write the line to the descriptor for the child
-			if(write(filedes[1], sline, MAXLINE) == -1)
+			if(write(filedes[1], sline, strlen(sline)) != strlen(sline))
 				err_sys("Failed to write to child");
 		}
-		// close the filedes
-		close(filedes[1]);
 	}
 	else
 	{ // child process
@@ -59,11 +45,11 @@ int main()
 		//
 		while(read(filedes[0], &rline, MAXLINE) > 0)
 		{ // read until the EOF is reached in the file
-			if(sscanf(rline, "%d %d", &int1, &int2) ==2)
+			if(sscanf(rline, "%d%d", &int1, &int2) ==2)
 			{ // scan the string for 2 seperate strings seperated by a space
 			  // to int both
 				// print result
-				sprintf(rline, "%d\n", int1 + int2);
+				sprintf(rline, "Sum: %d\n", int1 + int2);
 				// write to the std out and find out if error
 				n = strlen(rline);
 				if(write(STDOUT_FILENO, rline, n) != n)

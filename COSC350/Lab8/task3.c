@@ -30,7 +30,7 @@ int main()
 	}
 	pthread_cleanup_pop(0); // pop the handler off
 	// exit the thread
-	pthread_exit(0);
+	exit(0);
 }
 
 void thread1(void *arg)
@@ -45,8 +45,6 @@ void thread1(void *arg)
 	}
 	// pop the cleanup handler
 	pthread_cleanup_pop(0);
-	// exit the prog
-	pthread_exit(0);
 }
 
 void thread2(void *arg)
@@ -56,17 +54,16 @@ void thread2(void *arg)
 	while(1)
 	{
 		printf("In the second thread\n");
+		sleep(1);
 		count++;
-		if(count <= 10)
+		if(count == 10)
 		{
 			// cancel the arg thread
 			pthread_cancel((pthread_t) arg);
-			pthread_exit(0);
 		}
-		sleep(1);
 	}
 	// exit the prog
-	pthread_exit(0);
+	
 }
 
 // cleanup handler for thread 1
@@ -80,5 +77,6 @@ void bye(void *arg)
 void bye1(void *arg)
 {
 	printf("End of the program\n");
+	exit(0);
 }
 
