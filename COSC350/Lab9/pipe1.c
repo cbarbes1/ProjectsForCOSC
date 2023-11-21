@@ -16,9 +16,9 @@ int main()
 	//memset(buffer, '\0', sizeof(buffer));
 
 	if (pipe(file_pipes) == 0) {
-		data_processed = write(file_pipes[1], some_data, strlen(some_data));
+		data_processed = write(file_pipes[WRITE_END], some_data, strlen(some_data));
 		printf("Wrote %d bytes\n", data_processed);
-		data_processed = read(file_pipes[0], buffer, sizeof(buffer));
+		data_processed = read(file_pipes[READ_END], buffer, data_processed);
 		printf("Read %d bytes: %s\n", data_processed, buffer);
 		exit(EXIT_SUCCESS);
 	}
