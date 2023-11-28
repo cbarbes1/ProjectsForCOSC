@@ -34,6 +34,7 @@ int main(int argc, char**argv)
 		if(sscanf(buffer, "%d%d", &n, &n2) == 2){
 			shm->data.int1 = n;
 			shm->data.int2 = n2;
+			shm->status = FILLED;
 			while(shm->status != TAKEN);
 			printf("Enter two intergers: \n");
 		}

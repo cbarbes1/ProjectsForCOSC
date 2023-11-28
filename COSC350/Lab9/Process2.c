@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 	}
 
 	//read from the shared memory
-	while (shm->gostop == GO)
+	while (shm->gostop == GO && shm->gostop != STOP)
 	{
 		while(shm->status != FILLED)
 		{
@@ -33,6 +33,7 @@ int main(int argc, char **argv)
 				break;
 		}
 		printf("Sum of the two integer: %d\n", shm->data.int1 + shm->data.int2);
+		shm->status = TAKEN;
 	}
 	shmdt((void*)shm); //detach
 	return 0;
