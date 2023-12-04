@@ -32,7 +32,7 @@ int main()
 			sprintf(buf1, "%d", file_pipes[WRITE_END]);
 			sprintf(buf2, "%d", oth_pipes[READ_END]);
 			sprintf(buf3, "%d", oth_pipes[WRITE_END]);
-
+			
 			(void)execl("twoPipesChild", "twoPipesChild", buffer, buf1, buf2, buf3, (char *)0);
 			exit(EXIT_FAILURE);
 		}
@@ -41,9 +41,8 @@ int main()
 			close(file_pipes[READ_END]);
 			close(oth_pipes[WRITE_END]);
 			data_processed = write(file_pipes[1], some_data, strlen(some_data));
-			printf("%d - wrote %d bytes\n", getpid(), data_processed);
-			int status;
-			wait(&status);
+			printf("%d - wrote %d bytes: %s\n", getpid(), data_processed, some_data);
+			
 			data_processed = read(oth_pipes[READ_END], buff, BUFSIZ);
 			printf("%d - read %d bytes: %s\n", getpid(), data_processed, buff);	
 		}

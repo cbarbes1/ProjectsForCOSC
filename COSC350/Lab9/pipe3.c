@@ -26,7 +26,7 @@ int main()
 		if (fork_result == 0) {
 			close(file_pipes[READ_END]);
 			sprintf(buffer, "%d", file_pipes[0]);
-			(void)execl("pipe4", "pipe4", buffer, file_pipes[WRITE_END], (char *)0);
+			(void)execl("pipe4", "pipe4", buffer, (char *)0);
 			exit(EXIT_FAILURE);
 		}
 		else {

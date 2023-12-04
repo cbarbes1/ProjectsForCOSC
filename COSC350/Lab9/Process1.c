@@ -39,7 +39,7 @@ int main(int argc, char**argv)
 			printf("Enter two intergers: \n");
 		}
 		else{
-			printf("Invliad integers\n Enter two integers:\n");
+			printf("Invalid integers\n Enter two integers:\n");
 		}
 	}
 	shm->gostop = STOP;

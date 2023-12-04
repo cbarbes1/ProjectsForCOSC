@@ -21,12 +21,13 @@ int main(int argc, char *argv[])
 
 	close(fd[WRITE_END]);
 	close(fd2[READ_END]);
-
+	
+	
 	data_processed = read(fd[READ_END], buffer, BUFSIZ);
 	printf("%d - read %d bytes: %s\n", getpid(), data_processed, buffer);
-
+	
 	data_processed = write(fd2[WRITE_END], some_data, strlen(some_data));
-	printf("%d - wrote %d bytes: %s\n", getpid(), data_processed);
+	printf("%d - wrote %d bytes: %s\n", getpid(), data_processed, some_data);
 
 	exit(EXIT_SUCCESS);
 }
