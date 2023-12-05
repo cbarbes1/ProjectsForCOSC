@@ -46,18 +46,7 @@ int main(int argc, char **argv)
 	//read from the shared memory
 	while (1)
 	{
-		//printf("%d\n", semctl(semid, EMPTY, GETVAL));
 		int i;
-		//Stop if empty
-		/*while(semctl(semid, EMPTY, GETVAL) == 0){
-			printf("Empty\n");
-			sleep(1);
-		}*/
-		//Stop if mutex is locked
-		/*while(semctl(semid, MUTEX, GETVAL) == 0){
-			printf("waiting turn\n");
-			sleep(1);
-		}*/
 		//Decrease item
 		down(semid, FULL);
 		//Lock mutex

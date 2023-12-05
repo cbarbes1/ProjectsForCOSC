@@ -48,8 +48,6 @@ int main(int argc, char**argv)
 		//Assign random value between 0 to 10 until array is full
 		int i;
 		//Size of the array
-			//while(semctl(semid, FULL, GETVAL) == N);
-			//while(semctl(semid, MUTEX, GETVAL) == 0);
 			//Random number generation between 0 to 10
 			item = (rand() % (10 -0 +1)) +0;
 			printf("%d\n", semctl(semid, EMPTY, GETVAL));
