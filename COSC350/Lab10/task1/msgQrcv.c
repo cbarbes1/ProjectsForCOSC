@@ -30,7 +30,7 @@ int main(void)
 	
 	buf.id = 1;
 	
-	while(msgrcv(msqid, (struct usrData *)&buf, sizeof(buf), 0, 0) >0 && buf.id == 1){
+	while(msgrcv(msqid, (struct usrData *)&buf, sizeof(buf), 0, 0) >0 ){
 		
 		if(sscanf(buf.data, "%d %d", &int1, &int2) == 2){
 			printf("The sum is: %d \n", int1+int2);

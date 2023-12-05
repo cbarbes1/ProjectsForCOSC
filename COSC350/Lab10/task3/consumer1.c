@@ -41,8 +41,8 @@ int main(int argc, char **argv)
 		perror("semget");
 		exit(1);
 	}
-	int item, index;
-	int size = sizeof(shm->numbers)/sizeof(shm->numbers[0]);
+	int index;
+	int size = 5;
 	//read from the shared memory
 	while (1)
 	{
@@ -51,18 +51,15 @@ int main(int argc, char **argv)
 		down(semid, FULL);
 		//Lock mutex
 		down(semid, MUTEX);
-		item = 0;
+		index = semctl(semid, FULL, GETVAL);
+		shm->numbers[index] = 0;
+		for(int i = 0; i<size; i++){
+			printf("%d ", shm->numbers[i]);
+		}
 		//Unlock mutex
 		up(semid, MUTEX);
 		//Increase empty
 		up(semid, EMPTY);
-		//Get current full to insert
-		index = semctl(semid, FULL, GETVAL);
-		printf("%d\n", index);
-		shm->numbers[index-1] = item;
-		for(i = 0; i < size; i++){
-			printf("%d ", shm->numbers[i]);
-		}
 		printf("\n");
 		sleep(1);
 	}

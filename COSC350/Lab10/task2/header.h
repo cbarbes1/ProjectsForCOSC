@@ -10,7 +10,5 @@ struct integers{
 };
 
 struct usrData{
-	int status;
-	int gostop;
 	struct integers data;
 };

@@ -18,35 +18,29 @@ int main()
 		exit(1);
 	}
 	shm=(struct usrData *)shmat(shmid, NULL, 0);
+	
 	if((long)shm == -1)
 	{
 		perror("shmat error \n");
 		exit(1);
 	}
-	shm->gostop = GO;
-	shm->status = NOT_READY;
 
-	int size = sizeof(shm->data.numbers)/sizeof(shm->data.numbers[0]);
+	int size = 5;
 	shm->data.counter = 0;
 
-	while(1){
-		int i, j;
-
-		for(i = 0; i<size; i++){
-			shm->data.numbers[i] = (rand() % (10-0+1))+0;
-			shm->data.counter++;
-			if(shm->data.counter == size){
-				shm->status = FILLED;
-				while(shm->status != TAKEN);
-			}
-			for(j=0; j<size; j++){
-				printf("%d ", shm->data.numbers[j]);
-			}
-			printf("\n");
+	while(1){		
+		shm->data.numbers[shm->data.counter] = (rand() % (10+1));
+		shm->data.counter++;
+		while(shm->data.counter == size){
 			sleep(1);
 		}
+		for(int j=0; j<size; j++){
+			printf("%d ", shm->data.numbers[j]);
+		}
+		printf("\n");
+		sleep(1);
 	}
-	shm->gostop = STOP;
+	
 	shmdt((void *) shm);
 	return 0;
 }

@@ -42,34 +42,32 @@ int main(int argc, char**argv)
 		exit(1);
 	}
 	int item, index;
-	int size = sizeof(shm->numbers)/sizeof(shm->numbers[0]);
+	int size = 5;
 	//Run forever
 	while(1){
 		//Assign random value between 0 to 10 until array is full
 		int i;
 		//Size of the array
-			//Random number generation between 0 to 10
-			item = (rand() % (10 -0 +1)) +0;
-			printf("%d\n", semctl(semid, EMPTY, GETVAL));
-			//Down empty
-			down(semid, EMPTY);
-			//Down mutex
-			down (semid, MUTEX);
-			//Get current FULL value
-			index = semctl(semid, FULL, GETVAL);
-			//Input item
-			shm->numbers[index] = item;
-			for(i = 0; i< size; i++){
-				printf("%d ", shm->numbers[i]);
-			}
-			printf("\n");
-			//Return mutex to use
-			up(semid, MUTEX);
-			//Raise up full
-			up(semid, FULL);
-			sleep(1);
+		//Random number generation between 0 to 10
+		item = (rand() % (10+1));
+		//Down empty
+		down(semid, EMPTY);
+		//Down mutex
+		down (semid, MUTEX);
+		//Get current FULL value
+		index = semctl(semid, FULL, GETVAL);
+		//Input item
+		shm->numbers[index] = item;
+		for(int i = 0; i<size; i++){
+			printf("%d ", shm->numbers[i]);
+		}
+		printf("\n");
+		//Return mutex to use
+		up(semid, MUTEX);
+		//Raise up full
+		up(semid, FULL);
+		sleep(1);
 	}
-	shm->gostop = STOP;
 	shmdt((void *) shm); //detach
 	return 0;
 }

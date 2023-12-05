@@ -1,4 +1,3 @@
-//buildsm.sh
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/shm.h>
@@ -51,7 +50,5 @@ int main(int argc, char **argv)
 		perror("semctl Error");
 		exit(1);
 	}	
-	shm->status = NOT_READY;
-	shm->gostop = GO;
 	return 0;
 }

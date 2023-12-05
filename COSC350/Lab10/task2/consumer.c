@@ -22,23 +22,19 @@ int main()
 		perror("shmat error\n");
 		exit(1);
 	}
-	while(shm->gostop = GO){
+	while(1){
 		int i, j;
-		int size = sizeof(shm->data.numbers)/sizeof(shm->data.numbers[0]);
-		for(i=0; i<size; i++){
-			while(shm->data.counter == 0){
-				if(shm->gostop == STOP)
-					break;
-			}
-			shm->data.counter--;
-			shm->data.numbers[i] = 0;
-			for(j = 0; j<size; j++){
-				printf("%d ", shm->data.numbers[j]);
-			}
-			printf("\n");
-			shm->status = TAKEN;
+		int size = 5;
+		while(shm->data.counter == 0){
 			sleep(1);
 		}
+		shm->data.counter--;
+		shm->data.numbers[shm->data.counter] = 0;
+		for(j = 0; j<size; j++){
+			printf("%d ", shm->data.numbers[j]);
+		}
+		printf("\n");
+		sleep(1);
 	}
 	shmdt((void *)shm);
 	return 0;

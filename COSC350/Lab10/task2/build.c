@@ -26,7 +26,6 @@ int main()
 		exit(1);
 	}
 
-	shm->status = NOT_READY;
-	shm->gostop = GO;
+	
 	return 0;
 }
