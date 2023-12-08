@@ -4,7 +4,7 @@
 #include <errno.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
-#include "header.h"
+#include "header1.h"
 #include <sys/types.h>
 #include <unistd.h>
 

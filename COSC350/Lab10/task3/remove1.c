@@ -3,7 +3,7 @@
 #include <sys/shm.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "header.h"
+#include "header1.h"
 #include <sys/ipc.h>
 #include <sys/sem.h>
 
