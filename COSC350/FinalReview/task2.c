@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #define BUFFER_SIZE 1
-int palind(int fd1, fd2);
+int palind(int fd1, int fd2);
 
 int main(int argc, char *argv[])
 {
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
 		int des1dup = dup(des1);
 
-	d	if(palind(des1, des1dup) == 1){
+		if(palind(des1, des1dup) == 1){
 			printf("The file contains a palindrome\n");
 		}else{
 			printf("The file does not contain a palindrome\n");
@@ -32,16 +32,17 @@ int main(int argc, char *argv[])
 int palind(int fd1, int fd2)
 {
 	int front = 0;
-	int back = lseek(fd2, 0, SEEK_END);
-	char buf1[BUFFER_SIZE], buf2[BUFFER_SIZE];
-	int result = 0;
-	while(back > front && result == 0){
-		read(fd2, &buf2, BUFFER_SIZE);
-		front = lseek(fd1, front, SEEK_SET);
+	int back = lseek(fd2, -1, SEEK_END);
+	char buf1, buf2;
+	int result = 1;
+	while(back > front){
+		front = lseek(fd1, front++, SEEK_SET);
 		read(fd1, &buf1, BUFFER_SIZE);
-		back = lseek(fd2, --back, SEEK_SET);
-		if(*buf1 == *buf2)
-			result = 1;
+		back = lseek(fd2, back--, SEEK_SET);
+		read(fd2, &buf2, BUFFER_SIZE);
+		if(buf1 != buf2 && buf1 != '\n' && buf2 != '\n'){
+			result = 0;
+		}
 	}
 
 	return result;
