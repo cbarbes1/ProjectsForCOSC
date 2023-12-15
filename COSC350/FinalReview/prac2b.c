@@ -7,14 +7,17 @@
 #include <sys/msg.h>
 
 struct msgbuf{
-	int id;
-	char data[BUFSIZ];
+	long id;
+	char data[256];
 };
 
-struct integers{
-	int num1;
-	int num2;
+struct data{
+	int int1, int2;
+};
+struct Memory{
 	int status;
+	int gostop;
+	struct data nums;
 };
 
 int main()
@@ -22,19 +25,31 @@ int main()
 	key_t key = ftok(".", 'B');
 	int msgqid, shmid;
 	struct msgbuf buf;
-	struct integers *data;
-	int num1, num2;
-	msgqid=msgget(key, 0);
-	while(msgrcv(msgqid, (void *)&buf, sizeof(buf), 0, 0) > 0 && buf.status != 1){
-		if(sscanf(buf.data, "%d %d", num1, num2) == 2){
-			shmid=shmget(key, sizeof(data), IPC_CREAT | 0666);
-			data = (struct integers *)shmat(shmid, NULL, 0);
-			data->num1 = num1;
-			data->num2 = num2;
-			data->status = 1;
+	int int1, int2;
+	msgqid=msgget(key,IPC_CREAT | 0666);
+	if((shmid=shmget(key, sizeof(struct Memory), IPC_CREAT | 0666))<0){
+		perror("shmget error\n");
+		exit(1);
+	}
+	struct Memory *shm=(struct Memory *)shmat(shmid, NULL, 0);
+	shm->status = 0;
+	shm->gostop = 1;
+	buf.id = 1;
+	while(msgrcv(msgqid, (struct msgbuf*)&buf, sizeof(buf), 0, 0) > 0){
+		if(sscanf(buf.data, "%d %d", &int1, &int2) == 2){
+			printf("%d %d \n", int1, int2);
+			shm->nums.int1 = int1;
+			shm->nums.int2 = int2;	
+			shm->status = 1;
+			//while(shm->status !=2);
+			printf(" %d %d \n", shm->nums.int1, shm->nums.int2);	
 		}else{
 			printf("Invalid Entry\n");
+			continue;
 		}
 	}
+	shm->gostop = 2;
+	shmdt((void *)shm);
+	shmctl(shmid, IPC_RMID, NULL);
 	exit(0);
 }

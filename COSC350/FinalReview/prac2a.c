@@ -9,7 +9,7 @@
 
 struct msgbuf {
 	long id;
-	char data[BUFSIZ];
+	char data[256];
 };
 
 int main()
@@ -22,10 +22,12 @@ int main()
 	buf.id = 1;
 	// ask the user for integers
 	printf("Please enter an integer ^D to quit\n");
-	while(fgets(buf.data, BUFSIZ, stdin) != NULL){
-		msgsnd(msgqid, (void *)&buf, sizeof(buf), 0);
+	while(fgets(buf.data, sizeof(buf.data), stdin) != NULL){
+		printf(" %s \n", buf.data);
+		msgsnd(msgqid, (struct msgbuf *)&buf, sizeof(buf), 0);
 		printf("Please enter an integer ^D to quit\n");
 	}
+
 	msgctl(msgqid, IPC_RMID, NULL);
 	return 0;
 }
