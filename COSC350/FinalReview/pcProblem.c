@@ -140,6 +140,7 @@ void *thread1(void *threadid)
 	shmdt((void*)shm); // detach
 }
 
+//consumer
 void *thread2(void *threadid)
 {
 	int semid, shmid;
