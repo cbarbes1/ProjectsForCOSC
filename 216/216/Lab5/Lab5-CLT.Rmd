@@ -1,0 +1,460 @@
+------------------------------------------------------------------------
+
+---
+title: "Lab 5: Central Limit Theorem"
+author: "Dr. Jiacheng Cai, Dr. Veera Holdai"
+date: "2023-07-27"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+If we want to estimate a parameter of population - say, the mean of population - we can use a mean of a sample for our estimate. Imagine we have several different samples of the same size n. Chances are the means of those samples are different, at least some of them. On the other hand, since samples are random, sample means are random as well. Hence, we can look at sample means as values of a random variable and study the corresponding distribution and its properties.
+
+The **sampling distribution** of a statistic (such as a sample mean or sample proportion) is the distribution of all values of the statistic when $\underline{\text{all possible samples}}$ of the same size n are taken from the same population. Sampling distribution of sample mean $\overline{X}$ has the following properties:
+
+1.  If the sampled population has a finite mean $\mu$, then the mean of the sampling distribution of $\overline{X}$, $\mu_{\overline{X}}$, equals the mean of the sampled population, $\mu$. That is $\mu_{\overline{X}}=E[X]=\mu$.
+
+2.  If the sampled population has a finite standard deviation $\sigma$, then the standard deviation of the sampling distribution of $\overline{X}$ equals $$
+    \frac{\text{standard deviation of sampled population}}{\text{square root of sample size}},
+    $$ that is $\sigma_{\overline{X}}=\frac{\sigma}{\sqrt{n}}$.
+
+In addition to the properties above, describing mean and standard deviation of the sampling distribution of sample mean, in certain cases we know the shape of sampling distribution. We will see later how useful those fact can be.
+
+The theorem summarizing shape and parameters of sampling distribution is called the **Central Limit Theorem**. There are many variations of the Central Limit Theorem. in this course we are going to use the following two:
+
+-   The sampling distribution of $\overline{X}$ will be normal with mean $\mu_{\overline{X}}=E[X]=\mu$ and standard deviation $\sigma_{\overline{X}}=\frac{\sigma}{\sqrt{n}}$, provided that a random sample of $n$ observations is selected from a population with a normal distribution with population mean $\mu$ and population standard deviation $\sigma$.
+
+-   The sampling distribution of $\overline{X}$ will be approximately normal with mean $\mu_{\overline{X}}=E[X]=\mu$ and standard deviation $\sigma_{\overline{X}}=\frac{\sigma}{\sqrt{n}}$, provided that a random sample of **sufficiently large** $n$ observations is selected from **any** population with a finite population mean $\mu$ and a finite population standard deviation $\sigma$.
+
+Notice that statements of both versions of the Central Limit Theorem are the same, but assumptions are different. In one, normality of the "parent" or sampled distribution is required. The other version is valid for any (with finite population mean and standard deviation) distribution of the "parent" distribution as long as sample is large enough. For most sampled population, sample sizes of $n\geq 30$ will suffice for the normal approximation of sampling distribution to be reasonable.
+
+Notice that if the "parent" distribution is different from normal and sample is small (less than 30), or non-normal with infinite mean and standard deviation (even when the sample size is large), then we cannot claim that sampling distribution is normal and parameters, mean and standard deviation, are as stated.
+
+In this lab, we are going to examine the properties of the sampling distribution of sample means and the central limit theorem. We will use a shiny app "CLTapp.R". In the app, we will consider six different types of "parent" distributions. For each distributions, we will explore how does the sample size affects our observations of the discussed properties.
+
+But before we dig into the app, let's learn some preliminary knowledge about checking the normality of a data set, and how to insert images into your R Markdown report.
+
+# Part I: Checking Normality Using Histogram and QQ-Plot
+
+Since the Central Limit Theorem states that when certain assumptions are satisfied, the sampling distribution of sample means will be (or approach to) a particular normal distribution. Thus it is important to know how to check whether a data set (in this lab, the collection of sample means) is from a normal distribution. While more details will be discussed in Lab 7, one simple graphical method for checking the normality is using **histogram** and **QQ-plot**.
+
+In statistics, a histogram is an approximate representation of the distribution of numerical data. A QQ-plot (quantile-quantile plot) is a probability plot, a graphical method for comparing two probability distribution (x-the theoretical normal quantiles, y-the data set quantiles). If a data set is from a normal distribution, then we can expect that its histogram will be **approximately bell-shape**, **AND** the points in the **QQ-plot** will **approximately lie on the identity straight line** $y=x$.
+
+Let's insert the image "QQ_normal.png" to this R Markdown file as an example. Before you insert the image, make sure it is in the SAME folder with this R Markdown file.
+
+To add images to an R markdown file (when the image is in the same folder), we can use the following syntax
+
+```         
+![text about the image](image file name)
+```
+
+So, in our case, directly type the following outside any chunk. Then click "Visual" on the left-top corner, then click it again.
+
+```         
+![QQ-plot for a normal distribution](QQ_normal.png)
+```
+
+![QQ-plot for a normal distribution](QQ_normal.png)
+
+You can see that histogram (on the left-hand side) is approximately bell-shape and the points in the QQ-plot (on the right-hand side) approximately lie on the straight line. So we can conclude that the data set approximately follows a normal distribution.
+
+## Assignment 1
+
+Now, insert the images "QQ_rightskewed.png", "QQ_leftskewed.png", "QQ_bimodal.png", and "QQ_cauchy.png". Then describe your observations on the histograms and QQ-plots, and determine whether the corresponding data set is from a normal distribution.
+
+1.  Insert "QQ_rightskewed.png" below.
+
+    ![QQ plot for right skewed distribution](QQ_rightskewed.png)
+
+Describe your observation Above.
+
+```         
+As you can see, The graph on the left side shows a right skew. In the right-side graph the data points appear to skew upward away from the line showing a right skew. Approximately Right Skewed.
+```
+
+2.  Insert "QQ_leftskewed.png" below.
+
+    ![QQ plot for the left skewed distribution](QQ_leftskewed.png)
+
+Describe your observation above.
+
+```         
+As you can see on the left graph there seems to be an obvious left skew since most the data clusters towards the right side of the grahp with a leftward skew. In the QQ plot, the data seems to stray downward away from the line which tells us it must be a left skew.
+```
+
+3.  Insert "QQ_bimodal.png" below. ![QQ plot for Bimodal Distribution](QQ_bimodal.png)
+
+Describe your observation above.
+
+```         
+The above graph shows a bi modal distribution since there seems to be a fluctuation from right skew to left skew. It appears to be 2 different distributions on 1 graph hence the bi modal. 
+```
+
+4.  Insert "QQ_cauchy.png" below. ![QQ plot for the cauchy distribution](QQ_cauchy.png)
+
+Describe your observation above.
+
+```         
+This graph shows a cluster of data more towards the center. The distribution of this data is skewed in both directions and seems to not follow a normal distribution.
+```
+
+**End of Assignment 1**
+
+# Part II: Sampling Distributions of Sample Means: When Assumptions are Satisfied
+
+Recall the assumptions needed to observe the properties of sampling distribution of sample means"
+
+1.  The "parent" population has a finite mean $\mu$
+
+2.  The "parent" population has a finite standard deviation $\sigma$
+
+3.  a\. The "parent" population follows a normal distribution (then sample size $n$ doesn't matter), OR
+
+    b\. The "parent" population can be any distribution, as long as assumptions 1 and 2 are satisfied, and the sample size $n$ is sufficiently large ($n\geq 30$ for most of the cases).
+
+Let's use the **Shiny Web App** "CLTapp.R" to explore the properties of sampling distribution of sample means.
+
+Double click that file, and click the "Run App" button on the top of the editor. You should be able to see the following app window.
+
+![](App.png)
+
+**TYPE YOUR NAME AND DATE IN THE TEXTBOX ON THE LEFT-BOTTOM CORNER**
+
+Let's take a look at the app. On the left-hand side, you can select the population distribution ("parent" distribution) that you want to sample from. You can also change the sample size (how many values in ONE sample) and the number of samples (how many times to repeat the sampling).
+
+On the right-hand side, there are several tabs on the top. The first one "Population Distribution" present the histogram of the "parent" distribution (approximated by a sample with size of 300000). Move your mouse to the graph, you can see several icons pop up on the right-top corner. Click the first one "Download plot as a png", save the plot to the SAME folder with this R Markdown, then you can insert the image to this Markdown report, as you did in assignment 1.
+
+The second tab "Plots of First Eight Samples" present the dotplots of the first 8 samples from the distribution. You can change the sample size and the population distribution and see how the dotplots changes correspondingly.
+
+The third tab "Sample Details" presents the details values and statistics from the computer simulations. Each column represents ONE sample (and the 8 dotplots in the second tab are from the first 8 column here). You can see the detailed values in each sample (value 1, 2, etc.), Based on the values in each column, you can compute the sample mean/median/standard deviation (presented on the first three rows). If you have 100 samples, then you can obtain 100 sample means/medians. Then based on these 100 sample means (or medians), you can plot their histogram and QQ-plot (presented on the forth and the fifth tabs).
+
+Based on the app, we can now explore the properties of sampling distribution of sample means by going over the following assignments.
+
+## Assignment 2
+
+1.  Set the Population Distribution as "Normal", the Sample Size as 5, and the Number of samples as 500.
+
+2.  Go to the "Population Distribution" tab, download the distribution plot and name it as "pop_normal.png", then insert the image below.
+
+    ![Population Normal](pop_normal.png)
+
+3.  Based on the population distribution plot, answer the questions: what is the mean and standard deviation of this "parent" distribution, does it satisfy the assumptions? (specify which conditions are satisfied, especially 3a or 3b)
+
+    ```         
+    Mean = 0.002, Standard Deviation = 1.004 . This satisfies the assumption 3a since it follows a normal distribution.
+    ```
+
+4.  Go to the "Sampling Distribution - Sample Mean" tab, download the histogram and QQ-plot (for QQ-plot, you may need to right click you mouse on that plot, and click "Save image as..."). Name the plots as "sample_hist_normal_n5.png" and "sample_qq_normal_n5.png" (n5 means sample size n=5). Then insert the plots below
+
+    ![Sample histogram normal](sample_hist_normal_n5.png){width="50%"}
+
+    ![Sample QQ plot normal](sample_qq_normal_n5.png){width="50%"}
+
+5.  Based on the histogram and QQ_plot, answer the questions: what is the mean and standard deviation of $\overline{X}$? Do they (approximately) equal to the population mean and $\sigma/\sqrt(n)$, respectively? Based on the histogram and QQ_plot, determine whether the sampling distribution of sample means is approximately normal distributed.
+
+    (In the case when the calculation results on the histogram are covered by the image, move you mouse to the plot, use the "pan" pop-up icon and/or "zoom in" pop_up icon to get a clearer view)
+
+    ```         
+    mean of xbar is 0.034, standard deviation of xbar is 0.473 . mean of x is 0.002, sd/sqrt(n) is 0.449. it seems the means do not match but the sd and the sd/sqrt(n) approximately match. The sampling distribution of sample means is approximately normal.
+    ```
+
+6.  Keep the Population Distribution as "Normal"and the Number of samples as 500. But change the Sample Size to 30 and 100. Then answer questions 4 and 5 respectively. (when you download the plots, make sure to adjust the name to n30 and n100, respectively)
+
+    ![normal sample n=30](sample_hist_normal_n30.png){width="50%"} ![normal sample n = 30](sample_QQ_normal_n30.png){width="50%"} ![normal sample n = 100](sample_hist_normal_n100.png){width="50%"} ![normal sample n = 100](sample_QQ_normal_n100.png){wdith="50%" width="50%"}
+
+    ```         
+    number of samples = 30:
+    mean of x bar is 0.008, standard deviation of xbar is 0.181, mean of x is 0.003, the standard deviation of x/sqrt(n) is 0.182. The means do not match and the standard deviations match. The distribution appears to be normal.
+    number of samples = 100:
+    mean of x bar is 0.002, standard deviation of xbar is 0.1, mean of x is 0.003, standard deviation of x/sqrt(n) is 0.1, The means and the standard deviations are approximately the same. The distributiomn appears to be normal.
+    ```
+
+7.  Comparing results on questions 4, 5, and 6. How does the sample size affect the results?
+
+    ```         
+    Higher sample sizes are more likely to create a more normal distribution. Lower sample sizes are less likely to create a normal distribution.
+    ```
+
+**End of Assignment 2**
+
+The above is the case when the "parent" distribution is already normal. Next, let's consider the cases when the "parent" distribution is non-normal.
+
+## Assignment 3
+
+Set the Population Distribution to "Uniform", "Right Skewed", "Left Skewed", and "Bimodal". Then Answer all questions in Assignment 2 for EACH Population Distribution, respectively.
+
+Type \### to specified the population, for example
+
+```         
+### Uniform Pop Distribution
+```
+
+Then insert the images below that.
+
+To add a textbox to answer the question, type \`\`\`, then hit enter.
+
+### Uniform
+
+2.  Go to the "Population Distribution" tab, download the distribution plot and name it as "pop_normal.png", then insert the image below.
+
+    ![Population uniform](pop_uniform.png)
+
+3.  Based on the population distribution plot, answer the questions: what is the mean and standard deviation of this "parent" distribution, does it satisfy the assumptions? (specify which conditions are satisfied, especially 3a or 3b)
+
+    ```         
+    Mean = 0.5, Standard Deviation = 0.289 . Not normal, Sample size is not sufficient.
+    ```
+
+4.  Go to the "Sampling Distribution - Sample Mean" tab, download the histogram and QQ-plot (for QQ-plot, you may need to right click you mouse on that plot, and click "Save image as..."). Name the plots as "sample_hist_normal_n5.png" and "sample_qq_normal_n5.png" (n5 means sample size n=5). Then insert the plots below
+
+    ![Sample histogram uniform](sample_hist_uniform_n5.png){width="50%"}
+
+    ![Sample QQ plot normal](sample_QQ_uniform_n5.png){width="50%"}
+
+5.  Based on the histogram and QQ_plot, answer the questions: what is the mean and standard deviation of $\overline{X}$? Do they (approximately) equal to the population mean and $\sigma/\sqrt(n)$, respectively? Based on the histogram and QQ_plot, determine whether the sampling distribution of sample means is approximately normal distributed.
+
+    (In the case when the calculation results on the histogram are covered by the image, move you mouse to the plot, use the "pan" pop-up icon and/or "zoom in" pop_up icon to get a clearer view)
+
+    ```         
+    mean of xbar is 0.502, standard deviation of xbar is 0.126 . mean of x is 0.5 sd/sqrt(n) is 0.129 . it seems the means match and the sd and the sd/sqrt(n) approximately match. The sampling distribution of sample means is approximately normal.
+    ```
+
+6.  Keep the Population Distribution as "Normal"and the Number of samples as 500. But change the Sample Size to 30 and 100. Then answer questions 4 and 5 respectively. (when you download the plots, make sure to adjust the name to n30 and n100, respectively)
+
+    ![sample n=30](sample_hist_uniform_n30.png){width="50%"}![sample n = 30](sample_QQ_uniform_n30.png){width="50%"} ![sample n = 100](sample_hist_uniform_n100.png){width="48%"}![sample n = 100](sample_QQ_uniform_n100.png){wdith="50%" width="48%"}
+
+    ```         
+    number of samples = 30:
+    mean of x bar is 0.5, standard deviation of xbar is 0.052, mean of x is 0.5, the standard deviation of x/sqrt(n) is 0.053. The means do match and the standard deviations match. The distribution appears to be normal.
+    number of samples = 100:
+    mean of x bar is 0.5, standard deviation of xbar is 0.027, mean of x is 0.5, standard deviation of x/sqrt(n) is 0.029, The means and the standard deviations are approximately the same. The distributiomn appears to be normal.
+    ```
+
+7.  Comparing results on questions 4, 5, and 6. How does the sample size affect the results?
+
+    ```         
+    Higher sample sizes are more likely to create a more normal distribution. Lower sample sizes are less likely to create a normal distribution.
+    ```
+
+### Right Skewed
+
+2.  Go to the "Population Distribution" tab, download the distribution plot and name it as "pop_normal.png", then insert the image below.
+
+    ![Population Normal](pop_RS.png)
+
+3.  Based on the population distribution plot, answer the questions: what is the mean and standard deviation of this "parent" distribution, does it satisfy the assumptions? (specify which conditions are satisfied, especially 3a or 3b)
+
+    ```         
+    Mean = 1.134, Standard Deviation = 0.604 . This satisfies neither since its a right skew.
+    ```
+
+4.  Go to the "Sampling Distribution - Sample Mean" tab, download the histogram and QQ-plot (for QQ-plot, you may need to right click you mouse on that plot, and click "Save image as..."). Name the plots as "sample_hist_normal_n5.png" and "sample_qq_normal_n5.png" (n5 means sample size n=5). Then insert the plots below
+
+    ![Sample histogram right skew](sample_hist_RS_n5.png){width="50%"}
+
+    ![Sample QQ plot right skew](sample_QQ_RS_n5.png){width="50%"}
+
+5.  Based on the histogram and QQ_plot, answer the questions: what is the mean and standard deviation of $\overline{X}$? Do they (approximately) equal to the population mean and $\sigma/\sqrt(n)$, respectively? Based on the histogram and QQ_plot, determine whether the sampling distribution of sample means is approximately normal distributed.
+
+    (In the case when the calculation results on the histogram are covered by the image, move you mouse to the plot, use the "pan" pop-up icon and/or "zoom in" pop_up icon to get a clearer view)
+
+    ```         
+    mean of xbar is 1.142, standard deviation of xbar is 0.28 . mean of x is 1.134, sd/sqrt(n) is 0.27. it seems the means do match and the sd and the sd/sqrt(n) approximately match. The sampling distribution of sample means is approximately right skew.
+    ```
+
+6.  Keep the Population Distribution as "Normal"and the Number of samples as 500. But change the Sample Size to 30 and 100. Then answer questions 4 and 5 respectively. (when you download the plots, make sure to adjust the name to n30 and n100, respectively)
+
+    ![sample n=30](sample_hist_RS_n30.png){width="48%"} ![sample n = 30](sample_QQ_RS_n30.png){width="48%"} ![sample n = 100](sample_hist_RS_n100.png){width="48%"} ![sample n = 100](sample_QQ_RS_n100.png){wdith="50%" width="48%"}
+
+    ```         
+    number of samples = 30:
+    mean of x bar is 1.127, standard deviation of xbar is 0.111, mean of x is 1.134, the standard deviation of x/sqrt(n) is 0.11 . The means do match and the standard deviations match. The distribution appears to be normal.
+    number of samples = 100:
+    mean of x bar is 1.132, standard deviation of xbar is 0.057, mean of x is 1.134, standard deviation of x/sqrt(n) is 0.06, The means and the standard deviations are approximately the same. The distributiomn appears to be normal.
+    ```
+
+7.  Comparing results on questions 4, 5, and 6. How does the sample size affect the results?
+
+    ```         
+    Higher sample sizes are more likely to create a more normal distribution. Lower sample sizes are less likely to create a normal distribution.
+    ```
+
+### Left Skewed
+
+2.  Go to the "Population Distribution" tab, download the distribution plot and name it as "pop_LS.png", then insert the image below.
+
+    ![Population Left skew](pop_LS.png)
+
+3.  Based on the population distribution plot, answer the questions: what is the mean and standard deviation of this "parent" distribution, does it satisfy the assumptions? (specify which conditions are satisfied, especially 3a or 3b)
+
+    ```         
+    Mean = 0.769, Standard Deviation = 0.154  . This satisfies neither of the assumptions.
+    ```
+
+4.  Go to the "Sampling Distribution - Sample Mean" tab, download the histogram and QQ-plot (for QQ-plot, you may need to right click you mouse on that plot, and click "Save image as..."). Name the plots as "sample_hist_normal_n5.png" and "sample_qq_normal_n5.png" (n5 means sample size n=5). Then insert the plots below
+
+    ![Sample histogram left skew](sample_hist_LS_n5.png){width="48%"}
+
+    ![Sample QQ plot left skew](sample_QQ_LS_n5.png){width="48%"}
+
+5.  Based on the histogram and QQ_plot, answer the questions: what is the mean and standard deviation of $\overline{X}$? Do they (approximately) equal to the population mean and $\sigma/\sqrt(n)$, respectively? Based on the histogram and QQ_plot, determine whether the sampling distribution of sample means is approximately normal distributed.
+
+    (In the case when the calculation results on the histogram are covered by the image, move you mouse to the plot, use the "pan" pop-up icon and/or "zoom in" pop_up icon to get a clearer view)
+
+    ```         
+    mean of xbar is 0.766, standard deviation of xbar is 0.071 . mean of x is 0.769, sd/sqrt(n) is 0.069. it seems the means do match and the sd and the sd/sqrt(n) approximately match. The sampling distribution of sample means is a left skew for this low of sample size n.
+    ```
+
+6.  Keep the Population Distribution as "Normal"and the Number of samples as 500. But change the Sample Size to 30 and 100. Then answer questions 4 and 5 respectively. (when you download the plots, make sure to adjust the name to n30 and n100, respectively)
+
+    ![sample n=30](sample_hist_LS_n30.png){width="48%"} ![sample n = 30](sample_QQ_LS_n30.png){width="48%"} ![sample n = 100](sample_hist_LS_n100.png){width="48%"} ![sample n = 100](sample_QQ_LS_n100.png){wdith="50%" width="48%"}
+
+    ```         
+    number of samples = 30:
+    mean of x bar is 0.769, standard deviation of xbar is 0.029, mean of x is 0.769, the standard deviation of x/sqrt(n) is 0.028. The means do match and the standard deviations match. The distribution appears to be normal.
+    number of samples = 100:
+    mean of x bar is 0.769, standard deviation of xbar is 0.016, mean of x is 0.769, standard deviation of x/sqrt(n) is 0.015, The means and the standard deviations are approximately the same. The distributiomn appears to be normal.
+    ```
+
+7.  Comparing results on questions 4, 5, and 6. How does the sample size affect the results
+
+    ```         
+    Higher sample sizes are more likely to create a more normal distribution. Lower sample sizes are less likely to create a normal distribution.
+    ```
+
+### Bimodal
+
+2.  Go to the "Population Distribution" tab, download the distribution plot and name it as "pop_normal.png", then insert the image below.
+
+    ![Population Normal](pop_bi.png)
+
+3.  Based on the population distribution plot, answer the questions: what is the mean and standard deviation of this "parent" distribution, does it satisfy the assumptions? (specify which conditions are satisfied, especially 3a or 3b)
+
+    ```         
+    Mean = 0.501, Standard Deviation = 2.961 . This satisfies neither assumption.
+    ```
+
+4.  Go to the "Sampling Distribution - Sample Mean" tab, download the histogram and QQ-plot (for QQ-plot, you may need to right click you mouse on that plot, and click "Save image as..."). Name the plots as "sample_hist_normal_n5.png" and "sample_qq_normal_n5.png" (n5 means sample size n=5). Then insert the plots below
+
+    ![Sample histogram bimodal](sample_hist_bi_n5.png){width="50%"}
+
+    ![Sample QQ plot bimodal](sample_QQ_bi_n5.png){width="50%"}
+
+5.  Based on the histogram and QQ_plot, answer the questions: what is the mean and standard deviation of $\overline{X}$? Do they (approximately) equal to the population mean and $\sigma/\sqrt(n)$, respectively? Based on the histogram and QQ_plot, determine whether the sampling distribution of sample means is approximately normal distributed.
+
+    (In the case when the calculation results on the histogram are covered by the image, move you mouse to the plot, use the "pan" pop-up icon and/or "zoom in" pop_up icon to get a clearer view)
+
+    ```         
+    mean of xbar is 0.53, standard deviation of xbar is 1.329 . mean of x is 0.501, sd/sqrt(n) is 1.324. it seems the means do match and the sd and the sd/sqrt(n) approximately match. The sampling distribution of sample means is approximately normal.
+    ```
+
+6.  Keep the Population Distribution as "Normal"and the Number of samples as 500. But change the Sample Size to 30 and 100. Then answer questions 4 and 5 respectively. (when you download the plots, make sure to adjust the name to n30 and n100, respectively)
+
+    ![normal sample n=30](sample_hist_bi_n30.png){width="48%"} ![normal sample n = 30](sample_QQ_bi_n30.png){width="48%"} ![normal sample n = 100](sample_hist_bi_n100.png){width="48%"} ![normal sample n = 100](sample_QQ_bi_n100.png){wdith="50%" width="48%"}
+
+    ```         
+    number of samples = 30:
+    mean of x bar is 0.482, standard deviation of xbar is 0.522, mean of x is 0.501, the standard deviation of x/sqrt(n) is 0.541. The means do match and the standard deviations match. The distribution appears to be normal.
+    number of samples = 100:
+    mean of x bar is 0.526, standard deviation of xbar is 0.285, mean of x is 0.501, standard deviation of x/sqrt(n) is 0.296, The means and the standard deviations are approximately the same. The distributiomn appears to be normal.
+    ```
+
+7.  Comparing results on questions 4, 5, and 6. How does the sample size affect the results?
+
+    ```         
+    Higher sample sizes are more likely to create a more normal distribution. Lower sample sizes are less likely to create a normal distribution.
+    ```
+
+**End of Assignment 3**
+
+# Part III: Sampling Distributions of Sample Means: When Assumptions are NOT Satisfied
+
+In part II, the "parent" distributions we selected in fact satisfied the assumptions needed for the Central Limit Theorem. But what if one or some of the assumptions are not satisfied? Will the Central Limit Theorem still hold? Let's consider a particular distribution: **Cauchy Distribution**.
+
+One interesting facts about Cauchy distribution is that, it does NOT have defined mean or standard deviation, thus assumptions 1 and 2 are not satisfied. Let's explore the properties of the sampling distribution of sample means by completing the following assignment.
+
+## Assignment 4
+
+Set the Population Distribution to "Cauchy". Then Answer all questions in Assignment 2
+
+2.  Go to the "Population Distribution" tab, download the distribution plot and name it as "pop_normal.png", then insert the image below.
+
+    ![Population cauchy](pop_cauchy.png)
+
+3.  Based on the population distribution plot, answer the questions: what is the mean and standard deviation of this "parent" distribution, does it satisfy the assumptions? (specify which conditions are satisfied, especially 3a or 3b)
+
+    ```         
+    Mean = undefine, Standard Deviation = undefined . unable to make assumption
+    ```
+
+4.  Go to the "Sampling Distribution - Sample Mean" tab, download the histogram and QQ-plot (for QQ-plot, you may need to right click you mouse on that plot, and click "Save image as..."). Name the plots as "sample_hist_normal_n5.png" and "sample_qq_normal_n5.png" (n5 means sample size n=5). Then insert the plots below
+
+    ![Sample histogram cauchy](sample_hist_cauchy_n5.png){width="48%"}
+
+    ![Sample QQ plot cauchy](sample_QQ_cauchy_n5.png){width="48%"}
+
+5.  Based on the histogram and QQ_plot, answer the questions: what is the mean and standard deviation of $\overline{X}$? Do they (approximately) equal to the population mean and $\sigma/\sqrt(n)$, respectively? Based on the histogram and QQ_plot, determine whether the sampling distribution of sample means is approximately normal distributed.
+
+    (In the case when the calculation results on the histogram are covered by the image, move you mouse to the plot, use the "pan" pop-up icon and/or "zoom in" pop_up icon to get a clearer view)
+
+    ```         
+    mean of xbar is 0.825, standard deviation of xbar is 12.432 . mean of x is 2.989,  mean of sd/sqrt(n) is 923.202 . it seems the means do match and the sd and the sd/sqrt(n) do not match. The sampling distribution of sample means is not normal.
+    ```
+
+6.  Keep the Population Distribution as "Normal"and the Number of samples as 500. But change the Sample Size to 30 and 100. Then answer questions 4 and 5 respectively. (when you download the plots, make sure to adjust the name to n30 and n100, respectively)
+
+    ![cauchy sample n=30](sample_hist_cauchy_n30.png){width="48%"} ![cauchy sample n = 30](sample_QQ_cauchy_n30.png){width="48%"} ![cauchy sample n = 100](sample_hist_cauchy_n100.png){width="48%"} ![cauchy sample n = 100](sample_QQ_cauchy_n100.png){wdith="50%" width="48%"}
+
+    ```         
+    number of samples = 30:
+    mean of x bar is 0.808, standard deviation of xbar is 31.751, mean of x is 0.2.989, the standard deviation of x/sqrt(n) is 376.896. The means do match and the standard deviations do not match. The distribution appears to be more random.
+    number of samples = 100:
+    mean of x bar is 23.038, standard deviation of xbar is 503.3, mean of x is 2.989, standard deviation of x/sqrt(n) is 206.434, The means and the standard deviations do not match. The distributiomn appears to be more random.
+    ```
+
+7.  Comparing results on questions 4, 5, and 6. How does the sample size affect the results?
+
+    \`\`\`\
+    The cauchy seems to become more variable with higher sample sizes.
+
+    \`\`\`
+
+**End of Assignment 4**
+
+So, what can we do when assumption 1 and/or 2 are not satisfied? Interestingly, we can have a "Central Limit Theorem" for **Sample Medians** (we are dealing with sample means only by far). Of course, the sample medians version CLT also require OTHER assumptions. We don't go into the details here, but for the case of Cauchy, we can say the assumptions are satisfied. In this version, the mean of the sampling distribution of the sample medians is the population median, and the standard deviation is proportional to $1/\sqrt{n}$.
+
+## Assignment 5
+
+1.  Go to the tab "Sampling Distribution - Sample Median"
+
+2.  Set the Population Distribution as "Cauchy", Number of samples as 500, then change sample size as 10, 50, 100, and 300 respectively.
+
+3.  For each selected sample size, download the histogram and QQ-plot, then insert below.
+
+![cauchy histogram n=10](sampleMedian_hist_n10.png){width="50%"} ![cauchy QQ plot n=10](sampleMedian_QQ_n10.png){width="48%"} ![cauchy histogram n=50](sampleMedian_hist_n50.png){width="50%"} ![cauchy QQ plot n=50](sampleMedian_QQ_n50.png){width="48%"} ![cauchy histogram n=100](sampleMedian_hist_n100.png){width="50%"} ![cauchy QQ plot n=100](sampleMedian_QQ_n100.png){width="48%"} ![cauchy histogram n=300](sampleMedian_hist_n300.png){width="50%"} ![cauchy QQ plot n=300](sample_QQ_n300.png){width="48%"}
+
+4.  For each selected sample size, compare the "mean of samp_median" and "median of x" on the histogram. Then check if the "Ratio of 2nd and 6th line" are approximately equal to each others for different sample size. What is your observations.
+
+    ```         
+    The means dont seem to stay the same and are usually different. The ratio of 2nd and 6th line are approximately the same.The ratio of the standard deviations is showing to be similar every time.
+    ```
+
+5.  For each selected sample size, is the sampling distribution of sample median approximately normal? How does the sample size increasing affect the normality approaching?
+
+    ```         
+    The sampling distribution of sample median is approximately normal. sample size increase causes the data to become more normal.
+    ```
+
+**End of Assignment 5**
+
+# Part IV: Knit this markdown file to a html report
+
+After you complete all the above assignments, click the Knit button to create a html report. Submit that html report.

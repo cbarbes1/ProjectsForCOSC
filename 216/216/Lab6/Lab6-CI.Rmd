@@ -1,0 +1,496 @@
+---
+title: "Lab 6: Confidence Intervals"
+author: "Dr. Jiacheng Cai"
+date: "2023-07-27"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+Our goal in statistics in general is to estimate the value of an unknown population parameters, such as a population mean (like average income) or a proportion from a binomial population (proportion of unemployed people). The unknown population parameter (e.g. mean or proportion) that we are interested in estimating is called the **target parameter**.
+
+A single number calculated from the sample that estimates a target population parameter is called a **point estimator**. For example, we can use sample mean $\overline{X}$ to estimate population mean $\mu$. Being a single number point estimator is easy to compute. On the other hand, since sample is random, point estimator is random as well. Hence, we do not know how well the point estimator estimated the true value of target parameter.
+
+An **interval estimator** (or **confidence interval**) is a formula that tells us how to use the sample data to calculate an interval that estimates the target parameter. While it is definitely more complex than finding point estimator, the biggest advantage of interval estimators is that they come with **measure of reliability**.
+
+The procedure for constructing confidence intervals relies on the Central Limit Theorem. According to the Central Limit Theorem, the sampling distribution is approximately normal if one of the following is true:
+
+-   either sample is large enough, i.e. at least 30 observations, and the sample is selected from **any** population with a finite mean and a finite standard deviation.
+-   or sample is selected from a population, which itself is approximately normally distributed
+
+In this lab assignment students will use a Shiny App to generate random samples from various distributions and construct confidence intervals. Depending on distribution of "parent" population and sample size, confidence level (the most common confidence levels are 90%, 95%, and 99%) will be achieved and may be lower than expected.
+
+Recall the formula of the confidence interval of mean (when the assumptions of central limit theorem are satisfied).
+
+-   When the population standard deviation $\sigma$ is known, the \$(1-\\alpha)\*100\$ % confidence interval is given by
+
+    $$
+    \overline{X}\pm z_{\alpha/2}\frac{\sigma}{\sqrt{n}}
+    $$
+
+-   When the population standard deviation $\sigma$ is unknown, but the sample standard deviation \$s\$ is known, then the $(1-\alpha)*100$ % confidence interval is given by
+
+    $$
+    \overline{X}\pm t_{n-1,\alpha/2}\frac{s}{\sqrt{n}}
+    $$
+
+From the above formula, you can see the center of ONE confidence interval is determined by the sample mean $\overline{X}$, and the width of THAT confidence interval is determined by sample size $n$, standard deviation $\sigma$ or $s$, and the confidence coefficient $(1-\alpha)$ .
+
+The confidence interval computed from a random sample using the above formula provides the range that we can be $(1-\alpha)*100$ % confident that the population mean will lie within this range. We will explore the meaning of such statement in today's lab.
+
+But before that, let's first learn how to create a table (more spefically, a data frame) that contains the data we want to type in, and present it in R Markdown report.
+
+# Part 0: Create a Data.Frame with type-in Data and Present It As a Table
+
+Suppose that we want to create a table with three column. The first column has name "Sample Size", with values: 10, 40, 90; the second column has name "Num of CIs Covering True Mean", with values 89, 91, 93; the third column has name "Ave Width of CIs", with values 1.042, 0.522, 0.348. Finally, add a title to this table as "90% CI stats based on 100 random samples from a normal population". How to do that?
+
+First, create three objects corresponding to the three column.
+
+We can use the syntax
+
+object \<- c(xx,xx,xx,...,xx)
+
+Here object can be replace by the simplified name of the column (if you have space, use "\_" instead), and "xx" are the values in that column.
+
+```{r}
+Sample_Size <- c(10,40,90)
+Num_Cover <- c(89,91,93)
+CI_width <- c(1.042, 0.522, 0.348)
+```
+
+Next, we create the data frame object that combine the three columns. The syntax is:
+
+df \<- data.frame(first_column, second_column, ..., last_column)
+
+Again, you can replace "df" by the name you prefer about this table. And the "first_column", etc. should be the column objects you defined previously.
+
+```{r}
+CI_table_90_normal <- data.frame(Sample_Size, Num_Cover, CI_width)
+CI_table_90_normal
+```
+
+Now, change the column names
+
+```{r}
+colnames(CI_table_90_normal)<-c("Sample Size", "Num of CIs Covering True Mean", "Ave Width of CIs")
+CI_table_90_normal
+```
+
+Finally, present the data frame in a nicer table.
+
+```{r}
+library(knitr)
+kable(CI_table_90_normal,padding=6,align="ccc",caption="90% CI stats based on 100 random samples from a normal population")
+
+
+```
+
+Up to this point, we have learned how to create a data frame with type-in data, and present it in R Markdown. We will use this technique in the assignments later.
+
+Now, back to our confidence intervals. We will use the Shiny app "CIapp.R"
+
+Recall Lab 5. Similarly, double click the file "CIapp.R", open it with RStudio, click the "Run App" button on the right-top corner of the editor, and **TYPE YOUR NAME AND DATE IN THE TEXTBOX ON THE LEFT-BOTTOM CORNER**.
+
+You can see the detailed information on the tab "Sample Details".
+
+# Part I: Effects of Standard Deviation Used, Confidence Coefficient, and Sample Size.
+
+In this part, we start with the normal distribution. We will explore how do the standard deviation used, confidence coefficient, and sample size effect the width of the confidence interval (and thus the reliability of the estimation).
+
+First, about the **standard deviation known or not**. Recall that if the population variance (standard deviation) is unknown, then we will use the sample variance (standard deviation) and t distribution to compute the confidence interval.
+
+## Assignment 1
+
+1.  Set the Population Distribution as "Normal", The Population Variance Known is "Yes", the Confidence Coefficient is "0.95", the Sample Size is "30", and the Number of Samples is "100".
+
+2.  Go to tab "Confidence Interval - Sample Mean". Save the plot to the same folder of this R Markdown file (name it as "assignment1_2.png"), and insert that plot below.
+
+    ![CI - sample mean](assignment1_2.png)
+
+3.  Based on the above results, what is the proportion of confidence intervals covering the true population mean? What is the average width of these confidence intervals? Do the widths of these confidence intervals equal to each other?
+
+    ```         
+    The proportion of confidence intervals covering the true population mean is 96. The average width of these confidence intervals is 0.714. The widths of these cis dont equal each other.
+    ```
+
+4.  Now keep all the other input the same, change the Population Variance Known to "No". Save the plot to the same folder of this R Markdown file (name it as "assignment1_4.png"), and insert that plot below.
+
+    ![CI sample mean - pop var not known](assignment1_4.png)
+
+5.  What is the proportion of confidence intervals covering the true population mean? What is the average width of these confidence intervals? Do the widths of these confidence intervals equal to each other? Explain why if there is a difference between 2 and 4.
+
+    ```         
+    96, 0.73584, Do not equal. There is more CI not cover true mean are on the right.
+    ```
+
+**End of Assignment 1**
+
+Next, about the **Confidence Coefficient**
+
+## Assignment 2
+
+1.  Set the Population Distribution as "Normal", Pop Variance Known as "No", Confidence Coefficient as "0.80", Sample Size as "40", Nmber of Samples as "100".
+
+2.  Go to "Confidence Interval - Sample Mean", download the figure and post it below. ![CI - sample mean, pop not known](assignment2_1.png)
+
+3.  Based on the result, what is the proportion of CIs that cover the true mean? What is the average width of CIs?
+
+    ```         
+    proportion = 78, average width = 0.41178
+    ```
+
+    ![0.85](assignment2_2.png) ![0.90](assignment2_3.png) ![0.95](assignment2_4.png) ![0.99](assignment2_5.png)
+
+4.  Repeat question 2,3, but for different confidence coefficients "0.85", "0.90", "0.95", "0.99", respectively.
+
+    ```         
+    0.85 - proportion = 85, average CI = 0.41178
+    0.90 - proportion = 93, average CI = 0.53218
+    0.95 - proportion = 94, average CI = 0.63892
+    0.99 - proportion = 100, average CI = 0.85526
+    ```
+
+5.  Now, based on the above results, use the technique in Part 0, create a table that contains three columns: "Coefficient Coefficient" with values 0.80, 0.85, 0.90, 0.95, 0.99; "Prop of CIs cover True Mean" with values you observed in the previous steps; "Ave Width of CIs" with values you observed in the previous steps. Then add a title "CIs from Normal Pop - Different Confidence Coefficients - Sample Size 40". Present the R codes and the table below:
+
+    ```{r}
+
+    coco <- c(0.80, 0.85, 0.90, 0.95, 0.99)
+    prop <- c(78,85,93,94,100)
+    avgwid <- c(0.41178, 0.41178, 0.53218, 0.63892, 0.85526)
+
+    CI_table_dci <- data.frame(coco, prop, avgwid)
+    CI_table_dci
+
+    colnames(CI_table_dci)<-c("Coefficient Coefficient", "Num of CIs Covering True Mean", "Ave Width of CIs")
+    CI_table_dci
+
+
+    library(knitr)
+    kable(CI_table_dci,padding=6,align="ccc",caption="CIs from Normal Pop - Different Confidence Coefficients - Sample Size 40")
+
+    ```
+
+6.  Based on the results on 5, describe how does the proportion of CIs that cover true means, and the average width of CIs changes when confidence coefficient increases? Explain your observations.
+
+    ```         
+    As the Confidence coefficient increases both the proportion and the width grow as well. This seems to be from the fact that the confidence in a certain event is higher if the scale of the event is large.
+    ```
+
+**End of Assignment 2**
+
+The next factor we are interested in is the **sample size**.
+
+## Assignment 3
+
+1.  Set the Population Distribution as "Normal", Pop Variance Known as "No", Confidence Coefficient as "0.95", Sample Size as "10", Number of Samples as "100".
+
+2.  Go to "Confidence Interval - Sample Mean", download the figure and post it below. ![10](assignment3_1.png)
+
+3.  Based on the result, what is the proportion of CIs that cover the true mean? What is the average width of CIs?
+
+    ```         
+    proportion: 94.74 %
+    average width: 1.41
+    ```
+
+4.  Repeat question 2,3, but for different sample sizes "40", "90", "160", "250", respectively. ![40](assignment3_2.png) ![90](assignment3_3.png) ![160](assignment3_4.png) ![250](assignment3_5.png)
+
+    ```         
+    sample size: 40, proportion: 94.74, average width: 0.64
+    sample size: 90, proportion: 95.8, average width: 0.42
+    sample size: 160, proportion: 92.63, average width: 0.3135
+    sample size: 250, proportion: 91.58, average width: 0.24781
+    ```
+
+5.  Now, based on the above results, use the technique in Part 0, create a table that contains three columns: "Sample Size" with values 10, 40, 90, 160, 250;"Prop of CIs cover True Mean" with values you observed in the previous steps; "Ave Width of CIs" with values you observed in the previous steps. Then add a title "95% CIs from Normal Pop - Different Sample Sizes". Present the R codes and the table below:
+
+    ```{r}
+
+    ss <- c(10, 40, 90, 160, 250)
+    prop1 <- c(94.74,94.74,95.8,92.63,91.58)
+    avgwid1 <- c(1.41, 0.64, 0.42, 0.3135, 0.24781)
+
+    CI_table_sm <- data.frame(ss, prop1, avgwid1)
+    CI_table_sm
+
+    colnames(CI_table_sm)<-c("Sample Size", "Prop of CIs cover True Mean", "Ave Width of CIs")
+    CI_table_sm
+
+
+    library(knitr)
+    kable(CI_table_sm,padding=6,align="ccc",caption="95% CIs from Normal Pop - Different Sample Sizes")
+    ```
+
+6.  Based on the results on 5, describe how does the proportion of CIs that cover true means, and the average width of CIs changes when sample size increases? Explain your observations.
+
+    ```         
+    the proportion of CIs that cover true mean and the average width Of CIs decreases as the sample size increases. This shows that the results are being skewed by the larger sample sizes of the sample mean.
+    ```
+
+7.  Now, summarize the observations in assignment 2 and 3. When the coefficient coefficient increase, how does the proportion of CIs cover true means and the average width of CIs changes? How about the effect when the sample size increase? Do you prefer settings that has a higher proportion of CIs that cover the true mean? Do you prefer seetings that has a small average CI width? Based on the answers of the above questions, what should you do if you want to maintain a high proportion and a small average CI width at the same time?
+
+    ```         
+    The observation we made in 2 and 3 were that first the Confidence coefficient increases and the proportion fo the CI and the average width increases. However in the 3rd assignment we see that the sample size increases and the Proportion of CI decreased and the average width decreased. We prefer higher proportion of CIs that cover the true mean because we need a more accurate measure. Smaller CI width is not good because you want to be confident over a wider interval. 
+    ```
+
+**End of Assignment 3**
+
+# Part II: Effect of Population Distribution
+
+In part I, we have studied the effects of standard deviation used, confidence coefficient, and sample size for **Normal Population Distribution**. As we discussed in the introduction, the theoretic foundation of confidence interval for mean is the **Central Limit Theorem (CLT)**. Recall the assumptions needed for CLT:
+
+1.  The "parent" population has a finite mean $\mu$
+
+2.  The "parent" population has a finite standard deviation $\sigma$
+
+3.  a\. The "parent" population follows a normal distribution (then sample size $n$ doesn't matter), OR
+
+    b\. The "parent" population can be **ANY** distribution, as long as assumptions 1 and 2 are satisfied, and the sample size $n$ is sufficiently large ($n\geq 30$ for most of the cases).
+
+In this part, let's explore the effect of different "parent" distribution to CIs.
+
+We start with small sample size (n=5). Since we are discussing different distribution, we will NOT compare the width of confidence intervals between different distribution. However, we do prefer the widths of CIs remain close to each other within the same distribution (especially when we don't know the population standard deviation and using the sample standard deviation, which is the most common case in practice). In addition, we want to check whether the CIs not covering true mean is balance (i.e., whether there are more not-covering-true-mean CIs lie on the left-hand side (or right-hand side) of the true mean)
+
+## Assignment 4
+
+1.  Set the Population Distribution as "Normal", Pop Variance Known as "No", Confidence Coefficient as "0.80", Sample Size as "5", Number of Samples as "100".
+
+2.  Go to "Confidence Interval - Sample Mean", download the figure and post it below. ![0.80](assignment4_1.png)
+
+3.  Based on the result, what is the proportion of CIs that cover the true mean? How many CIs not cover true mean on the left? On the right? Are the difference between left and right greater than 5? Are the widths of CIs relatively close to each other?
+
+    ```         
+    proportion: 81 %
+    not cover left: 11
+    not cover right: 8
+    not greater that 5
+    the widths of the CIs: are not close
+    ```
+
+4.  Repeat question 2,3, but for different population distributions "Uniform", "Right Stewed", "Left Stewed", "Bimodal", and "Cauchy", respectively.
+
+    ![Uniform](assignment4_2.png) ![Right Skewed](assignment4_3.png) ![Left Skewed](assignment4_4.png) ![Bimodal](assignment4_5.png) ![Cauchy](assignment4_6.png)
+
+    a\. Based on the result, what is the proportion of CIs that cover the true mean? How many CIs not cover true mean on the left? On the right? Are the difference between left and right greater than 5? Are the widths of CIs relatively close to each other?
+
+    ```         
+    uniform: 
+    proportion: 84 %
+    not cover left: 8
+    not cover right: 8
+    not greater that 5
+    the widths of the CIs: are not close
+    right skewed: 
+    proportion: 81 %
+    not cover left: 17
+    not cover right: 2
+    not greater that 5
+    the widths of the CIs: are not close
+    left skewed: 
+    proportion: 80 %
+    not cover left: 8
+    not cover right: 12
+    not greater that 5
+    the widths of the CIs: are not close
+    bimodal: 
+    proportion: 82 %
+    not cover left: 12
+    not cover right: 6
+    not greater that 5
+    the widths of the CIs: are not close
+    cauchy: 
+    proportion: 65 %
+    not cover left: 2
+    not cover right: 33
+    not greater that 5
+    the widths of the CIs: are not close
+    ```
+
+5.  Now, based on the above results, use the technique in Part 0, create a table that contains three columns: "Parent Distribution" with values c("Normal", "Uniform", "Right Stewed", "Left Stewed", "Bimodal", "Cauchy"); "Prop of CIs cover True Mean" with values you observed in the previous steps; "Num of left CI not cover true mean" with values you observed in the previous steps; "Num of right CI not cover true mean" with values you observed in the previous steps.. Then add a title "80% CIs from Different Pop - Sample Size 5". Present the R codes and the table below:
+
+    ```{r}
+
+    pd <- c("Normal", "Uniform", "Right Skewed", "Left Stewed", "Bimodal", "Cauchy")
+    prop1 <- c(0.81, 0.84,0.81,0.80,0.82,0.65)
+    left <- c(11, 8, 17, 8, 12, 2)
+    right <- c(8, 8, 2, 12, 6, 33)
+
+    CI_table_pd<- data.frame(pd, prop1, left, right)
+    CI_table_pd
+
+    colnames(CI_table_pd)<-c("Parent Distribution", "Prop of CIs cover True Mean", "Num of left CI not cover true mean", "Num of right CI not cover true mean")
+    CI_table_pd
+
+
+    library(knitr)
+    kable(CI_table_pd,padding=6,align="ccc",caption="80% CIs from Different Pop - Sample Size 5")
+    ```
+
+6.  Based on the results on 5, describe your observations. When the sample size is small, will you trust the results of confidence interval when the you believe the sample data is not from a normal distributed population? Why or why not? (You may want to discussed the different distributions separately)
+
+    (remember you can check the normality using QQ-plot, more details will be discussed in Lab 7)
+
+    ```         
+    In a non-normal distribution, the confidence intervals seem to be coming out almost identical to the normal distribution with the CI calculation. With small sample sizes the confidence intervals seem to be wide and covering more ground which is more trustworthy data.
+    ```
+
+**End of Assignment 4**
+
+What if the sample size is large enough?
+
+## Assignment 5
+
+![0.80](assignment5_1.png)
+
+![Uniform](assignment5_2.png) ![Right Skewed](assignment5_3.png) ![Left Skewed](assignment5_4.png) ![Bimodal](assignment5_5.png) ![Cauchy](assignment5_6.png)
+
+Repeat and answer all questions in steps 1-5 in Assignment 4, but change the sample size to 500. Then answer the question. When the sample size is large, will you trust results of confidence interval when the you believe the sample data is not from a normal distributed population? Why or why not? (You may want to discussed the different distributions separately)
+
+```         
+normal:
+proportion: 84 %
+not cover left: 6
+not cover right: 10
+not greater that 5
+the widths of the CIs: are close
+uniform: 
+proportion: 76 %
+not cover left: 15
+not cover right: 9
+not greater that 5
+the widths of the CIs: are close
+right skewed: 
+proportion: 75%
+not cover left: 13
+not cover right: 12
+greater that 5
+the widths of the CIs: are close
+left skewed: 
+proportion: 77 %
+not cover left: 18
+not cover right: 5
+greater that 5
+the widths of the CIs: are not close
+bimodal: 
+proportion: 78 %
+not cover left: 9
+not cover right: 13
+not greater that 5
+the widths of the CIs: are not close
+cauchy: 
+proportion: 70 %
+not cover left: 0
+not cover right: 30
+greater that 5
+the widths of the CIs: are not close
+In a non normal distribution, the proportions seem to come out fairly close to the normal distribution. The confidence intervals seems to much smaller in the larger sample sizes which is not very trustworthy.
+```
+
+**End of Assignment 5**
+
+# Part III: Knit this markdown file to a html report
+
+After you complete all the above assignments, click the Knit button to create a html report. Submit that html report.
+
+# Appendix: Define a R Function to Compute CI
+
+Just for your knowledge, not part of this lab. We can define the following R function to compute CI for a given data set or given sample statistics.
+
+```{r}
+
+CI_data <- function(data, PopSDknown, PopSDvalue, ConfCoef, digit ){
+  
+  # data should be a column of numeric data
+  # PopSDknown should be "Yes" or "No", whether the Population standard deviation is known or not.
+  # PopSDvalue should be the value of the pop sd value. If pop sd is NOT known, just input 0.
+  # ConfCoef is the confidence coefficient, should be a real number between 0 and 1.
+  # digit is the number of digits you want to present in the CI
+  
+  x_bar <- mean(data)
+  n <- length(data)
+  
+  confLv <- ConfCoef*100
+  
+  if (PopSDknown == "Yes"){
+        crval <- qnorm((1+ConfCoef)/2)
+        SD <- PopSDvalue
+        output1 <- paste("The population standard deviation is", bquote(.(PopSDvalue)))
+        
+  }
+  else if (PopSDknown == "No"){
+        crval = qt((1+ConfCoef)/2,n-1)
+        SD <- sd(data)
+        output1 <- paste("The population standard deviation is unknown.")
+  }
+  
+  ci_ub <- round(x_bar + crval*SD/sqrt(n),digit)
+  ci_lb <- round(x_bar - crval*SD/sqrt(n),digit)
+  
+
+  
+  
+  cat(output1,"\nThe sample size is", bquote(.(n)), ". The sample mean is", bquote(.(x_bar)), ". The sample standard deviation is", bquote(.(sd(data))),"\nThe", bquote(.(confLv)), "% Confidence Interval for the population mean is (", bquote(.(ci_lb)), bquote(.(ci_ub)), ").\n" )
+  
+}
+
+
+```
+
+Let's try it.
+
+```{r}
+x <- rnorm(100,5,3)
+CI_data(x,"No",0,0.95,4)
+
+
+```
+
+```{r}
+
+CI_data(x,"Yes",3,0.95,4)
+```
+
+The next one is finding the CI with sample stat given (not the raw data).
+
+```{r}
+CI_stat <- function(x_bar,n, PopSDknown, SD, ConfCoef, digit ){
+  
+  # x_bar is the sample mean
+  # n is the sample size
+  # PopSDknown should be "Yes" or "No", whether the Population standard deviation is known or not
+  # SD is the pop sd or sample sd, depends on the input of PopSDknown
+  # ConfCoef is the confidence coefficient, should be a real number between 0 and 1.
+  # digit is the number of digits you want to present in the CI
+  
+
+  confLv <- ConfCoef*100
+  
+  if (PopSDknown == "Yes"){
+        crval <- qnorm((1+ConfCoef)/2)
+        output1 <- paste("The population standard deviation is", bquote(.(SD)))
+        
+  }
+  else if (PopSDknown == "No"){
+        crval = qt((1+ConfCoef)/2,n-1)
+        output1 <- paste("The population standard deviation is unknown.")
+  }
+  
+  ci_ub <- round(x_bar + crval*SD/sqrt(n),digit)
+  ci_lb <- round(x_bar - crval*SD/sqrt(n),digit)
+
+  
+  cat(output1,"\nThe sample size is", bquote(.(n)), ". The sample mean is", bquote(.(x_bar)), ". The sample standard deviation is", bquote(.(SD)),"\nThe", bquote(.(confLv)), "% Confidence Interval for the population mean is (", bquote(.(ci_lb)), bquote(.(ci_ub)), ").\n" )
+  
+}
+```
+
+```{r}
+CI_stat(4.711773,100,"Yes",3,0.95,4)
+```

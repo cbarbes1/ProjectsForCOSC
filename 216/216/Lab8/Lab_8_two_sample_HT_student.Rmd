@@ -1,0 +1,374 @@
+---
+title: 'Lab 8: Comparing Two Population Means'
+author: "kgteller"
+date: "2023-06-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(BSDA)
+library(nortest)
+library(car)
+```
+
+# Lab 8: Comparing Two Population Means
+
+Today we are going to look at conducting hypothesis tests when we have two samples of data. Recall the steps we want to take when running a hypothesis test:
+
+1.  A description the null and alternative hypotheses in terms of the problem.
+
+2.  A statement of the null and alternative hypotheses in standard symbols.
+
+3.  The significance level (size of the Type I error), α, that will be tolerated.
+
+4.  The name of the statistical test to be used and the assumptions required in order for the test to be valid. (i.e. small sample size, not approximately normal, paired, independent, etc.)
+
+5.  A clear description of exactly what the decision rule is; i.e. under what circumstances is the null hypothesis rejected.
+
+6.  A clear statement indicating whether or not you actually reject H0. This decision must be linked to the numerical value of p actually observed and the value of α.
+
+7.  A very clear description of what was actually decided in the context of the original problem. For example, if the problem is about mean airfares between two cities, simply saying reject Ho is not good enough; you need to say what this decision means as it applies to mean airfares.
+
+8.  Any statistical decision method is subject to Type I or Type II error. Discuss which type is possible in your final decision and if possible, its probability.
+
+When we have two samples we need to first consider the relationship between the data. There are two different relationships we can have between the data:
+
+**Independent Samples**: A random sample of size $n_1$ is selected from the first population, and a random sample of size $n_2$ is selected *independently* from the second population. The null hypothesis usually is $\mu_1=\mu_2$ .Then $\bar{x}_1-\bar{x}_2$is calculated, but this time a *2-sample test* is used; there is no way to view the data as a single sample.
+
+When the sample sizes are small and the the both populations are not normal a Mann-Whitney test can sometimes be used. The Mann-Whitney test would be used if the two samples have a distribution with the same shape. in addition the Mann-Whitney test is not about $\mu_1$ and $\mu_2$, but about the population medians $\eta_1$ and $\eta_2$. so the two hypotheses become:
+
+$H_0: \eta_1=\eta_2 \\$ $H_1: \eta_1 \neq,\lt,\gt \eta_2$
+
+**Paired Samples** When the two samples have the same sample size and each data point in one sample can be *paired* with another data point in the other sample. The difference between the populations means is denoted $\mu_d=\mu_1-\mu_2$. Here the null hypothesis is that $\mu_d=0$. Now this can be treated as a single sample and a 1-sample hypothesis can br run on the **sample differences**.
+
+In order to run either of these tests we can use the t.test(), or wilcox.test() commands that we discussed in the previous lab.
+
+To run an independent 2-sample t-test we would use the following syntax: t.test(sample1,sample2)
+
+to run an independent Mann-whitney test we would use the following syntax: wilcox.test(sample1,sample2,alternative='two.sided','less','greater')
+
+To run a paired t-test we use the following syntax: t.test(sample1,sample2,paired=TRUE)
+
+for today's lab we will data from the pulse.csv. The data relates to a class of statistic students that measured their resting pulse (Pulse1) and then a random number of students ran in place while the others just stayed still. The pulses of the entire class were recorded again (Pulse2). Along with the pulse data other data was collected that included, height, weight, sex, and weather or not they smoked.
+
+For reference here is a more detailed summary of the data:
+
+In this data set, there are 8 variables:
+
+-   Pulse1: The resting pulse of each student
+-   Pulse2: The pulse after running or not running for each student (after treatment)
+-   Ran: Whether or not the student ran in place: 1=Yes or 2=No (treatment)
+-   Smokes: Whether or not the student smokes regularly: 1=Yes or 2=No
+-   Sex: The biological characteristics of males or females of the student: 1=M or 2=F
+-   Height: The height of the student, in inches
+-   Weight: The weight of the student, in pounds
+-   Activity: The usual activity level of the student: 1=Slight, 2=Moderate, or 3=A lot
+
+## Assignment 1
+
+Recall Lab 0. Create the following objects to answer each of the other assignments:
+
+|     Name     |                    Explanation of Name                    |
+|:------------:|:---------------------------------------------------------:|
+|    Diffs     |                       Pulse1-Pulse2                       |
+|   Diffs_R    |          Pulse1 -- Pulse2 for Runners (Ran = 1)           |
+|   Diffs_NR   |        Pulse1 -- Pulse2 for non Runners (Ran = 2)         |
+| Diffs_RandS  |   Pulse1 -- Pulse 2 for Runners who smoke (Smokes = 1)    |
+| Diffs_RandNS | Pulse1 -- Pulse2 for Runners who don't smoke (Smokes = 2) |
+|   Weight_M   |                     Weights of males                      |
+|   Weight_F   |                    Weights of females                     |
+|  Weight_M_S  |                  Weights of male smokers                  |
+| Weight_M_NS  |                Weights of male non-smokers                |
+|  Weight_F_S  |                 Weights of female smokers                 |
+| Weight_F_NS  |               Weights of female non-smoker                |
+
+```{r}
+data0<-read.csv("Pulse.csv")
+
+diffs <- data0$Pulse1-data0$Pulse2
+
+r <- subset(data0, Ran == 1)
+nr <- subset(data0, Ran == 2)
+diffs_r <- r$Pulse1 - r$Pulse2
+
+diffs_nr <- nr$Pulse1 - nr$Pulse2
+
+s <- subset(data0, Smokes == 1)
+ns <- subset(data0, Smokes == 2)
+
+Diffs_RandS <- s$Pulse1 - s$Pulse2
+Diffs_RandNS <- ns$Pulse1 - ns$Pulse2
+
+Weight_M <- subset(data0, Sex == 1)$Weight
+
+Weight_F <- subset(data0, Sex == 2)$Weight
+
+
+Weight_M_S <- subset(subset(data0, Sex==1), Smokes == 1)$Weight
+
+Weight_M_NS <- subset(subset(data0, Sex==1), Smokes == 2)$Weight
+
+Weight_F_S <- subset(subset(data0, Sex==2), Smokes == 1)$Weight
+
+Weight_F_NS <- subset(subset(data0, Sex==2), Smokes == 2)$Weight
+```
+
+**End Assignment 1**
+
+## Assignment 2
+
+A researcher wants to test the hypothesis that the average pulse of the class was greater the second time around than the first time. Conduct the appropriate test to test this hypothesis and clearly state your conclusion following the 8 steps described above.
+
+```{r}
+
+t.test(x=diffs, mu=0, alternative="less", conf.level=0.95)
+```
+
+```         
+ n > 30 so we can assume it is approximately normal
+ with a paired sample as well
+1. H0: The average pulse of the class was the same in both tests
+  Ha: The average pulse of the class was greater the second time
+  
+2. H0: mu_d = 0 mu_d = mu_1 - mu_2 
+Ha: mu_d < 0 mu_1 - mu_2 < 0
+
+3. alpha that will be tolerated alpha = 0.05
+
+4. Large sample size, approximately normal, paired so we can use the 1 - sample z test 
+
+5. H0 is rejected if the P-value < alpha 
+
+6. pvalue = 1.012e-06 < 0.05 so we reject H0 and accept Ha
+
+7. The sample shows enough evidence to accept the statement: "The average pulse of the class was greater the second time"
+
+8. We found that it could be possible that this is a type I error so pvalue < 0.05
+Type I error: pvalue < alpha we reject H0 when true 
+Type II error: pvalue>= alpha failed to reject H0 and failed to support Ha
+```
+
+**End Assignment 2**
+
+Now it probably makes sense to separate the class into two groups, the runners and the non-runners.
+
+## Assignment 3
+
+A researcher now wants to look at the pulses of the running group before and after to conclude whether or not running in place increases mean heart rate. Conduct the appropriate test to test this hypothesis and clearly state your conclusion following the 8 steps described above.
+
+```{r}
+
+t.test(x=diffs_r, mu=0, alternative="less", conf.level=0.95)
+
+```
+
+```         
+HA: mu pulse after running > mu pulse before running since they are paired take the difference to combine two samples into one:
+diffs_r
+
+H0: mu = 0
+HA: mu < 0
+
+HA becomes mu_diffs_R < 0
+p-value = 6.324e-09
+sample size of each greater than 30
+sample sizen for Diffs is 35>30
+sigma of diffs unknown
+
+possible to be type 1 error
+
+1-sample t should be used
+
+In conclusion, The mean heart rate after running is greater.
+```
+
+**End Assignment 3**
+
+## Assignment 4
+
+A researcher now wants to run the same hypothesis as before but with the non-runners to see if there is any difference in mean heart rate. Conduct the appropriate test to test this hypothesis and clearly state your conclusion following the 8 steps described above.
+
+```{r}
+t.test(x=diffs_nr, mu=0, alternative="less", conf.level=0.95)
+```
+
+```         
+HA: mu pulse after not running > mu pulse before not running 
+since they are paired take the difference to combine two samples into one:
+Diffs_r
+
+H0: mu = 0
+HA: mu < 0
+HA becomes mu_diffs_nr < 0
+p-value = 0.5754 > 0.05
+sample size of each greater than 30
+sample sizen for diffs is 57>30
+sigma of diffs unknown
+
+1-sample t should be used 
+
+possible to be Type 2 error
+
+In conclusion, the mean heart rate after not run does not have significant evidence to show that mu after running is greater
+```
+
+**End Assignment 4**
+
+## Assignment 5
+
+Now among the runners there could be another factor that affects the average heart rate. This confounding factor could be smoking. Therefore the researcher wants to know does the mean heart rate of smokers increase after running in place? Conduct the appropriate test to test this hypothesis and clearly state your conclusion following the 8 steps described above. You may have a small sample size and it is non-normal you may have to use the Wilcoxon or Sign tests discussed in the previous lab.
+
+```{r}
+#test for normality
+ad.test(Diffs_RandS)
+qqPlot(Diffs_RandS)
+
+t.test(x=Diffs_RandS, mu= 0, alternative = "less", conf.level=0.95)
+```
+
+```         
+HA: mean heart rate of smokers after run > mean heart rate before run
+Diffs_RandS
+
+H0: mu = 0
+HA: mu < 0
+not significant size to say normal
+ad test pvalue = 0.05747 > 0.05 so we can say this sample is normal
+Corresponding qq plot shows normal shape
+t test can be completed on this small sample
+pvalue < alpha = 0.05 
+pvalue after t test pvalue = 0.003608 < 0.05
+We can reject H0 and accept HA
+Type 1 error is possible
+So we can say "The mean heart rate after running for smokers is higher than before running"
+```
+
+**End Assignment 5**
+
+## Assignment 6
+
+Now to make a comparison the next hypothesis would be does running in place increase the mean heart rate of non-smokers? Conduct the appropriate test to test this hypothesis and clearly state your conclusion following the 8 steps described above.
+
+```{r}
+
+#test for normality
+ad.test(Diffs_RandNS)
+qqPlot(Diffs_RandNS)
+
+t.test(x=Diffs_RandNS, mu= 0, alternative = "less", conf.level=0.95)
+```
+
+```         
+HA: The mean heart rate after running > the mean heart rate before running; Non Smokers
+
+H0: mu = 0
+HA: mu < 0
+not significant size to say normal
+ad test pvalue = 0.05747 > 0.05 so we can say this sample is normal
+Corresponding qq plot shows normal shape
+t test can be completed on this small sample
+pvalue < alpha = 0.05 
+pvalue after t test pvalue = 0.003608 < 0.05
+We can reject H0 and accept HA
+Type 1 error is possible
+So we can say "The mean heart rate after running for non-smokers is higher than before running"
+```
+
+**End Assignment 6**
+
+## Assignment 7
+
+Now a researcher is interested in the weights of the class. They want to determine whether the weights of males and females differ.Conduct the appropriate test to test this hypothesis and clearly state your conclusion following the 8 steps described above. ( if using a non-parametric test remember to state the conclusion in terms of means and not medians)
+
+```{r}
+# since sd is not know of either we use 2 sample t test
+t.test(x=Weight_M, y=Weight_F, mu = 0, alternative="two.sided", conf.level=0.95)
+```
+
+```         
+** This sample is not paired**
+n1 > 30 and n2 >30
+HA: The weight of the females differs from the male
+
+H0: mu = 0
+HA: mu != 0
+pvalue = 2.2e-16 < 0.05 = alpha
+We can reject H0 and accept HA meaning
+"The weight of the females differs from the males"
+```
+
+**End Assignment 7**
+
+## Assignment 8
+
+Going a little deeper into the data a researcher thinks that smoking might have an effect on weight. The researcher wants to test the hypothesis about whether the mean weight of males who smoke is different from males who do not smoke. Conduct the appropriate test to test this hypothesis and clearly state your conclusion following the 8 steps described above. ( if using a non-parametric test remember to state the conclusion in terms of means and not medians)
+
+```{r}
+Weight_M_S
+Weight_M_NS
+
+ad.test(Weight_M_S)
+
+qqPlot(Weight_M_S)
+
+t.test(x=Weight_M_S, y=Weight_M_NS, mu=0, alternative="two.sided", conf.level=0.95)
+```
+
+```         
+This sample is not paired
+n1 < 30 but n2 > 30
+Weight_M_NS is normal from the n2 > 30
+Weight_M_S needs ad.test and qqplot
+ad test pvalue = 0.6017 > 0.05 so it is approximately normal
+qq plot also shows normal
+HA: The mean weight of males that smoke differs from the mean weight of non smoking men
+H0: mu=0
+HA: mu!=0
+pvalue = 0.1834 > 0.05 so we fail reject H0 and fail to accept HA
+Possibly Type 2 error 
+Fail to reject H0, Fail to accept HA
+```
+
+**End Assignment 8**
+
+## Assignment 9
+
+The last hypothesis that the researcher want to test is whether the mean weight of females who smoke is different from females who do not smoke. Conduct the appropriate test to test this hypothesis and clearly state your conclusion following the 8 steps described above. ( if using a non-parametric test remember to state the conclusion in terms of means and not medians)
+
+```{r}
+
+ad.test(Weight_F_NS)
+ad.test(Weight_F_S)
+
+qqPlot(Weight_F_NS)
+qqPlot(Weight_F_S)
+
+t.test(x=Weight_F_S, y=Weight_F_NS, mu=0, alternative="two.sided", conf.level=0.95)
+```
+
+```         
+not a paired sample
+n1 and n2 <30
+after ad test completion we find pvalues are both greater than 0.05 so these are normal samples
+sds are not known so t.test needed
+HA: The Weight of the females who smoke is different from the weights of the females who dont smoke
+H0: mu= 0
+HA: mu != 0
+pvalue = 0.5281 > 0.05
+So we will fail to reject H0 and fail to accept HA
+Possible to be Type 2 error
+```
+
+**End Assignment 9**
+
+## Conclusion assignment
+
+Based on the hypotheses you have tested and there results write a concluding paragraph or more about your findings:
+
+```         
+We first saw that the mean pulse of the class was greater the second time. We then saw that the mean pulse was greater after running for the subset who ran before the second test. On top of this we see that the non runners had no significant evidence to say that the heart rate was greater after not running. This leads us to think that maybe the running was causing the greater heart rate. We then tested smokers who run and they had higher heart rate after running. We saw the same result when we tested non smokers so smoking does not seem to be the catalyst here. The next test was the mean weight of the class and whether females weight differs from males which it was shown to be different. We then tested on males and females whether smoking made a difference in weight which it did not. In conclusion, The classes heart rate was greater after running and smoking had no significant effect on heart rate or weight.
+```
+
+**End Conclusion Assignment**

@@ -1,0 +1,347 @@
+---
+title: 'Lab 7: Hypothesis Testing for Large and Small Samples'
+author: "kgteller, Dr. Cai"
+date: "2023-06-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(BSDA)
+```
+
+# Lab 7:Hypothesis Testing for Large and Small Samples
+
+Today we will be going through how to conduct hypothesis tests when we have sample sizes greater than or equal to 30 and when the sample size is small. In general whenever conducting a hypothesis test the following eight steps can help:
+
+1.  A description the null and alternative hypotheses in terms of the problem.
+
+2.  A statement of the null and alternative hypotheses in standard symbols.
+
+3.  The significance level (size of the Type I error), α, that will be tolerated.
+
+4.  The name of the statistical test to be used and the assumptions required in order for the test to be valid. (i.e. small sample size, not approximately normal, etc.)
+
+5.  A clear description of exactly what the decision rule is; i.e. under what circumstances is the null hypothesis rejected.
+
+6.  A clear statement indicating whether or not you actually reject H0. This decision must be linked to the numerical value of p actually observed and the value of α.
+
+7.  A very clear description of what was actually decided in the context of the original problem. For example, if the problem is about mean airfares between two cities, simply saying reject Ho is not good enough; you need to say what this decision means as it applies to mean airfares.
+
+8.  Any statistical decision method is subject to Type I or Type II error. Discuss which type is possible in your final decision and if possible, its probability.
+
+# Large population Size - sigma unknown
+
+For a sample size n to be large we need $n \geq 30$. If the population standard deviation $\sigma$ is unknown, we can run a T-test on our sample.
+
+to run a T-test in R using the t.test() command. the inputs of the command are the data, $\mu=\mu_0$, alternative="two.sided","greater","less", conf.level=c-level = 1 - alpha.
+
+To run a t-test we can load a data-frame and choose the column of data we want to run the test on.
+
+```{r}
+
+
+mydata<-read.csv("firstgrade.csv")
+
+x<-mydata["Height"]
+
+y<-mydata["Weight"]
+
+```
+
+Now we can use the data in x and y to run the following hypothesis tests ( follow the 8 step method described above) :
+
+```{r}
+
+```
+
+## Assignment 1
+
+The state department of education in a particular state claims that the mean height of a first grader is 42 inches. A researcher in a particular region of the state believes the mean height of first grade students in this region exceeds 42 inches. The researcher will examine height data for 73 first graders in the region and can tolerate the size of the Type I error being α = 0.05. following the 8 steps described above run the appropriate test and clearly state your conclusion.
+
+```{r}
+
+#if you are directly given data, you know you should use 1 sample t test, the r code is t.test
+
+# x = data, mu = mu0, in the hypothesis,
+# alternative is either "two.sided", or "greater", "less"
+# conf.level = 1 - alpha
+
+t.test(x=x, mu=42, alternative = "greater", conf.level = (1-0.05))
+```
+
+```         
+1. NULL: the mean height of the first grader in thatr region is equal to 42 inches
+Alternative: the mean height of the first graders in that region is greater than 42 inches.
+
+2. h0: mu=42 vs HA: mu>42
+
+3. Alpha = 0.05, it is the prob of making type I error, it is also the proob standard we used to define an unusual even.
+
+4. since the smple size n=73 > 30. is is a large sample. since we are not given population standard deviation sigma we should use 1-sample t 
+
+5. If the computed p-value is less than alpha, we have sufficient evidence to reject H0 and to support Ha, if the computed p-value >= alpha.
+we do not have sufficient evidence to reject H0 and do no have sufficient evidence to support Ha.
+
+p-value = the probability of getting such a sample ( or more extreme sample) if we assume H0 is true)
+
+6. using r to compute the p-value = 0.02718 < 0.05 = alpha. this sample of 73 students height provide sufficient evidence to reject H0 and to support HA
+
+7 it means, the sample  provide sufficient evidence to support the statement: "the mean height of the first graders in that region is greater than 42 inches"
+
+8. the above decision is possible to be an error
+
+Type I error: reject H0 when it is true (p-value < alpha)
+Type 2 error: failed to reject H0 when is is not true
+
+since our decision is rejecting H0, it is possible to be a type I error, with the probability alpha=0.05.
+```
+
+**End Assignment 1**
+
+## Assignment 2
+
+The state department of education in a particular state claims that the mean weight of a first grader is 43 lbs. A researcher in a particular region of the state believes the mean weight of first grade students in this region exceeds 43 lbs. The researcher will examine weight data for 73 first graders in the region and can tolerate the size of the Type I error being α = 0.05. Following the 8 steps described above run the appropriate test and clearly state your conclusion.
+
+```{r}
+
+t.test(x=y, mu=43, alternative = "greater", conf.level = (1-0.05))
+
+```
+
+```         
+1. NULL: the mean weight of the first grader in thatr region is equal to 43 lb
+Alternative: the mean weight of the first graders in that region is greater than 43 lb.
+
+2. h0: mu=43 vs HA: mu>43
+
+3. Alpha = 0.05, it is the prob of making type I error, it is also the prob standard we used to define an unusual even.
+
+4. since the sample size n=73 > 30. is is a large sample. since we are not given population standard deviation sigma we should use 1-sample t 
+
+5. If the computed p-value is greater than alpha, we have do not have sufficient evidence to reject H0 and cannot support Ha, if the computed p-value < alpha.
+we do have sufficient evidence to reject H0 and do have sufficient evidence to support Ha.
+
+p-value = the probability of getting such a sample ( or more extreme sample) if we assume H0 is true)
+
+6. using r to compute the p-value = 0.05376 > 0.05 = alpha. this sample of 73 students height provide sufficient evidence to reject H0 and to support HA
+
+7 it means, the sample  provide sufficient evidence to support the statement: "the mean lbs of the first graders in that region is less than 43 lb"
+
+8. the above decision is possible to be an error
+
+Type I error: reject H0 when it is true (p-value < alpha)
+Type II error: failed to reject H0 when is is not true
+
+since our decision is not to rejecting H0, it is possible to be a type II error, with the probability alpha=0.05.
+```
+
+**End Assignment 2**
+
+# Small Population Size
+
+Testing hypotheses about a population measure of location; e.g., mean or median when only a small random sample is available (n \< 30). If we are sampling from a normal population we can continue to use the 1-sample t-test. However, if we are sampling from non-normal population, the t-test might not be appropriate. Other tests are available e.g., the 1-sample Wilcoxon test and the 1-sample sign test, and these might be better choices when sampling from a non-normal population.
+
+For small samples sizes the first thing that needs to be done is to check whether or not the sample cam from an approximately normal distribution.
+
+To test a data set to determine whether or not it is reasonable to assume it is a random sample from a normal distribution we will use the Anderson-Darling Test. The null and alternative hypotheses for the Anderson-Darling test are;
+
+$H_0:$ The data is a random sample from a normal distribution $H_1:$ The data is not a random sample from a normal distribution.
+
+Usually the value of $\alpha$ for this hypothesis test is .05, so a p-value less than .05 would lead to the decision to reject $H_0$; i.e., to conclude that there is evidence that the random sample is not from a normal population. If we do reject $H_0$, then a 1 sample t-test should not be used to test a population mean.
+
+To run the anderson-darling test in R we need the nortest package and then can use the command ad.test(). To visualize the data and how close to normal the data is we can use the car package and the qqPlot() command.
+
+To start we will produce some random data from a standard normal distribution.
+
+```{r}
+library(nortest)
+
+library(car)
+x_Z25<-rnorm(25,0,1)
+
+ad.test(x_Z25)
+
+qqPlot(x_Z25)
+
+```
+
+## Assignment 3
+
+To get some practice using the Anderson-Darling test label three columns appropriately and then generate three random samples of size 25 using Random Data. In your first variable put a random sample of size 25 from a normal distribution with mean 0 and standard deviation 12. In your second variable, put a random sample of size 25 from an exponential population with mean 12, and in your third variable put a random sample from a Cauchy distribution with location parameter 0 and scale parameter 12. Use the Anderson-Darling test to test each of these data sets for normality.Be sure to state for each test the appropriate null and alternative hypotheses, the $\alpha$ being used, the p-value for the test and the conclusion. Also include the normality plot for each.
+
+```{r}
+
+norm1<-rnorm(25,0,12)
+
+
+ad.test(norm1)
+
+qqPlot(norm1)
+```
+
+```         
+NULL: the data is a random sample from a normal distribution
+Alternative: the data is not a random sample from a normal distribution
+h0: p<0.05 ha: p>=0.05
+alpha = 0.05
+p = 0.1255
+since the p-value is larger than 0.05 there is not enough evidence to reject h0 and there is not enough evidence to accept ha, so we can use the 1sample t test for this 
+```
+
+```{r}
+expon<-rexp(25,12)
+
+ad.test(expon)
+
+qqPlot(expon)
+```
+
+```         
+NULL: the data is a random sample from a normal distribution
+Alternative: the data is not a random sample from a normal distribution
+p = 0.003717
+h0: p<0.05 ha: p>=0.05
+alpha = 0.05
+since the p-value is smaller than 0.05 there is enough evidence to reject h0 and accept ha which means we cannot use the 1 sample t test. 
+```
+
+```{r}
+
+cauchyD<-rcauchy(25,0,12)
+
+ad.test(cauchyD)
+
+qqPlot(cauchyD)
+```
+
+```         
+NULL: the data is a random sample from a normal distribution
+Alternative: the data is not a random sample from a normal distribution
+p = 0.4287
+h0: p<0.05 ha: p>=0.05
+alpha = 0.05
+since the p-value is larger than 0.05 there is not enough evidence to reject h0 and there is not enough evidence to accept ha, so we can use the 1sample t test for this 
+```
+
+**End Assignment 3**
+
+Now based on the results there are three possible tests that can be used:
+
+• If the data is from a normal distribution, then the population mean µ is the same as the population median, so a 1 sample t-test should be used.
+
+• If the population distribution is symmetric; i.e. not skewed, then the 1 sample Wilcoxon Test should be used. (In this case the population mean is also the same as population median.) In R we can use wilcox.test() command
+
+• If the population is neither symmetric nor normal, then use a 1 sample Sign Test would be used. (And in this case the population median is different from the population mean.) In R we can use the SIGN.test() command.
+
+For the following two problems you will use the data in the Banking.csv file. load the data into a data-frame and complete the following two problems:
+
+```{r}
+
+
+```
+
+## Assignment 4
+
+The median weight of a penny is believed to be at least 450 grams. A researcher believes the median has dropped below 450 grams. So the null hypothesis is the median equals 450 grams and the alternative hypothesis is the median is less than 450 grams. The researcher is willing to tolerate a Type I error of size α = .05. Unfortunately, the researcher only has access to a random sample of size 10 which is less than 30. preform the appropriate test to test this hypothesis and clearly state your conclusion following the 8 step method described above. Use the 1991 column in the data frame.
+
+```{r}
+
+bank<-read.csv("banking.csv")
+boxplot(bank$X1991)
+
+##approximately symmetric
+
+wilcox.test(x=bank$X1991, mu=450, alternative="less", conf.level=0.95)
+
+```
+
+```         
+1. NULL: the median weight of a penny is 450 grams
+Alternative: the median weight of a penny is less than 450 grams
+
+2. h0: m=450 vs HA: m<450
+
+3. Alpha = 0.05, it is the prob of making type I error, it is also the prob standard we used to define an unusual even.
+
+4. since the sample size n=10 < 30. is not large enough however it is symmetric so we can use the wilcox test
+
+5. If the computed p-value is greater than alpha, we have do not have sufficient evidence to reject H0 and cannot support Ha, if the computed p-value < alpha.
+we do have sufficient evidence to reject H0 and do have sufficient evidence to support Ha.
+
+p-value = the probability of getting such a sample ( or more extreme sample) if we assume H0 is true)
+
+6. using r to compute the p-value = 0.06177 > 0.05 = alpha. this sample of 10 random sample penny weights does not provide sufficient evidence to reject H0 and not enough evidence to support HA
+
+7 it means, the sample does not provide sufficient evidence to support the statement: "the median has dropped below 450 grams"
+
+8. the above decision is possible to be an error
+
+Type I error: reject H0 when it is true (p-value < alpha)
+Type II error: failed to reject H0 when is is not true
+
+since our decision is not to rejecting H0, it is possible to be a type II error, with the probability alpha=0.05.
+```
+
+**End Assignment 4**
+
+## Assignment 5
+
+Now assume that a researcher wants to know if the median weight was greater than 350 grams in 1990 preform the appropriate test to test this hypotheses and clearly state your conclusion following the 8 step method described above.
+
+```{r}
+
+boxplot(bank$X1990)
+
+## not symmetric
+
+SIGN.test(x=bank$X1990, md=350, alternative="greater", conf.level=0.95)
+```
+
+```         
+1. NULL: the median weight of a penny is 350 grams
+Alternative: the median weight of a penny is greater than 350 grams
+
+2. h0: m=350 vs HA: m>350
+
+3. Alpha = 0.05, it is the prob of making type I error, it is also the prob standard we used to define an unusual even.
+
+4. since the sample size n=10 < 30. is not normal since it is not large enough and not symmetric so we must settle for the SIGN test.
+
+5. If the computed p-value is greater than alpha, we have do not have sufficient evidence to reject H0 and cannot support Ha, if the computed p-value < alpha.
+we do have sufficient evidence to reject H0 and do have sufficient evidence to support Ha.
+
+p-value = the probability of getting such a sample ( or more extreme sample) if we assume H0 is true)
+
+6. using r to compute the p-value = 0.623 > 0.05 = alpha. this sample of 10 random sample penny weights does not provide sufficient evidence to reject H0 and not enough evidence to support HA 
+
+7 it means, the sample does not provide sufficient evidence to support the statement: "the median was greater than 350 grams"
+
+8. the above decision is possible to be an error
+
+Type I error: reject H0 when it is true (p-value < alpha)
+Type II error: failed to reject H0 when is is not true
+
+since our decision is not to rejecting H0, it is possible to be a type II error, with the probability alpha=0.05.
+```
+
+**End Assignment 5**
+
+## Summary Statistics - t test
+
+In R we can also run a t-test with summary statistics. So if we have just $\bar{x}$, $s_x$, and $n$, we can still run the t-test using the function tsum.test() from the BDSA package. the inputs are mean.x,s.x,n.x,alternative="two.sided","greater","less", $\mu=\mu_0$,conf.level.
+
+Lets say we have the summary statistics of baby weights at a local hospital with $\bar{x}=6.45$lbs and $s_x=4$ with a sample size of $n=45$ and we want to test if the average weight of babies in this hospital is heavier than 6 lbs at an $\alpha=.05$. We could do that as follows:
+
+```{r}
+tsum.test(mean.x=6.45,s.x=4,n.x=45,mu=6,alternative = 'greater',conf.level = .95)
+```
+
+# If sigma is known, and either you have large n, or small n but normal population, you can use z-test
+
+The rcode for z test is
+
+z.test(x=data, sigma.x=sigma, mu=mu0, alternative = "xxx", conf.level = 0.xx)
+
+zsum.test(mean.x=xbar, s.x=sigma, n.x=n, mu=mu0, alternative = "xxx", conf.level = 0.xx)
