@@ -1,0 +1,840 @@
+---
+title: "AllInOne"
+author: "Cole Barbes"
+date: "2023-10-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(extraDistr)
+library(BSDA)
+```
+
+```{r}
+Binom_plotter<-function(n,p,lb,ub){
+x<-seq(0,n)
+hx<-dbinom(x,n,p)
+
+
+i<-x>= lb & x<= ub
+
+hxi<-dbinom(x[i],n,p)
+
+
+plot(x,hx,type='h', xlim=c(0,n),ylim=c(0,max(hx)))
+
+
+if (lb>=0&lb<=n){
+  abline(v=lb,lty=3,col='blue')
+}
+
+if (ub>=0&ub<=n){
+  abline(v=ub,lty=3,col='blue')
+}
+par(new=T)
+plot(x[i],hxi,type='h', col="red", xlim=c(0,n),ylim=c(0,max(hx)),xlab="",ylab="" )
+
+par(new=F)
+
+
+area <- pbinom(ub, n, p) - pbinom(lb, n, p) + dbinom(lb,n,p)
+result <- paste("P(",lb,"\u2264 X \u2264",ub,") =",
+   signif(area, digits=3), "\n",
+   "n=", n, " p=", p)
+mtext(result,3)
+
+}
+```
+
+## Author: Cole Barbes
+
+## Pulling In data from a File
+
+```{r}
+data0 <- read.csv("US_STATES.csv")
+```
+
+## Check Normality
+
+```{r}
+hist(data0$LifeExp)
+```
+
+```{r}
+
+library(car)
+
+qqPlot(data0$LifeExp)
+```
+
+## Compute the Mean, Variance, and Standard Deviation
+
+```{r}
+mean(data0$LifeExp)
+
+var(data0$LifeExp)
+
+sd(data0$LifeExp)
+
+```
+
+## Quartiles from data set
+
+In r,
+
+p is usually for area under the curve and to the left of the cutting point - P(x\<=q]
+
+q is the cutting point that p of the data will be to the left of that point
+
+d is for discrete P(x=3)
+
+binom for binomial
+
+pois for poisson
+
+norm for normal
+
+## Normal Random Variable
+
+Given p, find q
+
+Given q, find p
+
+Different P[.....]
+
+```{r}
+pnorm(q=15, mean=20, sd=)
+
+
+```
+
+## The Discrete Uniform Distribution
+
+```{r}
+# define the x-axis
+x_uniform<-seq(1,30, length=30)
+
+# calculate the uniform probabilities
+y_uniform<- ddunif(x_uniform,min=1,max=30)
+
+# plot the distribution
+plot(x_uniform,y_uniform, type='h')
+```
+
+```{r}
+ddunif()
+```
+
+## Binomial Random Variable
+
+Assume the following random variable follows a binomial distribution with n = 20, p=0.6
+
+Example 1: find P(x\<=13]
+
+```{r}
+pbinom(q=13,size=20,prob=0.6)
+Binom_plotter(20, 0.6, 0, 13)
+```
+
+Example 2: find P(x\<12)
+
+```{r}
+pbinom(q=12,size=20,prob=0.6)
+Binom_plotter(20, 0.6, 0, 11)
+```
+
+Example 3: find P(x=13)
+
+```{r}
+
+dbinom(13, 20, 0.6)
+Binom_plotter(20, 0.6, 13, 13)
+```
+
+Example 4: find P(4\<X\<=13)
+
+```{r}
+pbinom(13, 20, 0.6)-pbinom(4, 20, 0.6)
+Binom_plotter(20, 0.6, 5, 13)
+```
+
+Example 5: find P(4\<=X\<13)
+
+```{r}
+pbinom(13, 20, 0.6)-pbinom(4, 20, 0.6)
+Binom_plotter(20, 0.6, 4, 13)
+```
+
+Example 6: find p(4\<=X\<=13)
+
+Example 7: find P(4\<X\<13)
+
+Example 8: find P(X\>=13)
+
+Example 9: find P(x\>13)
+
+### Homework
+
+If x is a binomial random variable, the following probabilities represent each case
+
+dbinom(xvalue, size, p or q)
+
+a\. n= 5, x=1, p=0.2
+
+```{r}
+dbinom(1,5, .2)
+```
+
+b\. n= 4, x=2, q=0.4
+
+`{r} dbinom(2, size=4, 0.4)}`
+
+c\. n= 3, x=0, p=0.7
+
+`{r} dbinom(0, 3, 0.7)}`
+
+d\. n=5, x=3, p=0.1
+
+`{r} dbinom(3, 5, 0.1)}`
+
+b\. n=4, x=2, q=0.6
+
+`{r} dbinom(2, 4, 0.6)}`
+
+b\. n= 3, x=1, p=0.9
+
+`{r} dbinom(1, 3, 0.9)}`
+
+if x is a binomial random variable, find the following probabilities
+
+a\. P(x\<10) for n=25, p=0.7
+
+`{r} pbinom(10, 25, 0.7)}`
+
+b\. P(x\>=10) for n=15, p=0.9
+
+`{r} 1-pbinom(10, 15, 0.9)}`
+
+c\. P(x=2) for n = 20, p= 0.2
+
+`{r} dbinom(2, 20, 0.2)}`
+
+## Poisson Random Variable
+
+For a Poisson distribution the commands would be:
+
+rpois(n,lambda)-Which generates a random sample from the Poisson distribution
+
+dpois(x,lambda)-generates $P(X=x)$ for the Poisson distribution
+
+ppois(q,lambda)- calculates $P(X\leq x)$ for a Poisson distribution.
+
+qpois(p,lambda)- This gives the x value such that $P(X \leq x)=p$ for a Poisson distribution.
+
+average number of weekly sightings is 2.6
+
+```{r}
+
+dpois(5, 2.6)
+#qpois(0.95, 2.6)
+ppois(2, 2.6)
+
+lamb<-seq(0, 52)
+x<-seq(0,52)
+for (i in 1:length(lamb)){plot(x,dpois(x,lamb[i]),type="h",main=substitute(paste("n=36 p= ",a),list(a=lamb[i])))}
+```
+
+### Exponential
+
+a\. theta = 6.25
+
+```{r}
+pexp(5, 1/6.25)
+qexp(p=0.275, rate=1/6.25)
+```
+
+### Quiz 2
+
+```{r}
+pbinom(p=0.2,size=3, q=0.8)
+Binom_plotter(3, 0.2, 0, 0.8)
+```
+
+```{r}
+pbinom(q=0.8,size=3,prob=0.2)
+Binom_plotter(3, 0.2, 0, 3)
+
+dbinom(0, 3,  0.2)+dbinom(1, 3, 0.2)+dbinom(2, 3, 0.2)+dbinom(3, 3, 0.2)
+
+dbim
+```
+
+## Note 17: Confidence Interval.
+
+```{r}
+CI_data <- function(data, PopSDknown, PopSDvalue, ConfCoef, digit ){
+  
+  # data should be a column of numeric data
+  # PopSDknown should be "Yes" or "No", whether the Population standard deviation is known or not.
+  # PopSDvalue should be the value of the pop sd value. If pop sd is NOT known, just input 0.
+  # ConfCoef is the confidence coefficient, should be a real number between 0 and 1.
+  # digit is the number of digits you want to present in the CI
+  
+  x_bar <- mean(data)
+  n <- length(data)
+  
+  confLv <- ConfCoef*100
+  
+  if (PopSDknown == "Yes"){
+        crval <- qnorm((1+ConfCoef)/2)
+        SD <- PopSDvalue
+        output1 <- paste("The population standard deviation is", bquote(.(PopSDvalue)))
+        
+  }
+  else if (PopSDknown == "No"){
+        crval = qt((1+ConfCoef)/2,n-1)
+        SD <- sd(data)
+        output1 <- paste("The population standard deviation is unknown.")
+  }
+  
+  ci_ub <- round(x_bar + crval*SD/sqrt(n),digit)
+  ci_lb <- round(x_bar - crval*SD/sqrt(n),digit)
+  
+
+  
+  
+  cat(output1,"\nThe sample size is", bquote(.(n)), ". The sample mean is", bquote(.(x_bar)), ". The sample standard deviation is", bquote(.(sd(data))),"\nThe", bquote(.(confLv)), "% Confidence Interval for the population mean is (", bquote(.(ci_lb)), bquote(.(ci_ub)), ").\n" )
+  
+}
+```
+
+```{r}
+CI_stat <- function(x_bar,n, PopSDknown, SD, ConfCoef, digit ){
+  
+  # x_bar is the sample mean
+  # n is the sample size
+  # PopSDknown should be "Yes" or "No", whether the Population standard deviation is known or not
+  # SD is the pop sd or sample sd, depends on the input of PopSDknown
+  # ConfCoef is the confidence coefficient, should be a real number between 0 and 1.
+  # digit is the number of digits you want to present in the CI
+  
+
+  confLv <- ConfCoef*100
+  
+  if (PopSDknown == "Yes"){
+        crval <- qnorm((1+ConfCoef)/2)
+        output1 <- paste("The population standard deviation is", bquote(.(SD)))
+        
+  }
+  else if (PopSDknown == "No"){
+        crval = qt((1+ConfCoef)/2,n-1)
+        output1 <- paste("The population standard deviation is unknown.")
+  }
+  
+  ci_ub <- round(x_bar + crval*SD/sqrt(n),digit)
+  ci_lb <- round(x_bar - crval*SD/sqrt(n),digit)
+
+  
+  cat(output1,"\nThe sample size is", bquote(.(n)), ". The sample mean is", bquote(.(x_bar)), ". The sample standard deviation is", bquote(.(SD)),"\nThe", bquote(.(confLv)), "% Confidence Interval for the population mean is (", bquote(.(ci_lb)), bquote(.(ci_ub)), ").\n" )
+  
+}
+```
+
+### Example 1
+
+```{r}
+CI_stat(x_bar=120.1, n=50, PopSDknown="Yes", SD=20, ConfCoef=0.95, digit=4)
+```
+
+### Example 2
+
+if you are given the data
+
+```{r}
+dataCI <- read.csv("Note17Example.csv")
+
+CI_data(data=dataCI$Data, PopSDknown="No", PopSDvalue=0, ConfCoef=0.95, digit=4)
+```
+
+### Practice Exam
+
+```{r}
+# question 1 a die is found unfair. The probability distribution of the X. the outcome when you toss this die once is given in the following table
+x<-c(1, 2, 3, 4, 5, 6)
+p<-c(0.3, 0.1, 0.15, 0.15, 0.2, 0.1)
+
+mu <- sum(x*p)
+mu
+
+var <- sum(x^2*p) - mu^2
+var
+
+sd = sqrt(var)
+sd
+
+
+```
+
+```{r}
+
+sd(c(0.3, 0.2, 0.15, 0.15, 0.2, 0.1))
+```
+
+```{r}
+
+sum(dbinom(x=c(0, 1, 2), size=4, p=0.2))
+```
+
+```{r}
+
+pnorm(q=15, mean=11, sd=4)-pnorm(q=10, mean=11, sd=4)
+
+1-pnorm(q=20, mean=11, sd=4)
+
+qnorm(p=0.90, mean=11, sd=4)
+```
+
+```{r}
+
+pbinom(q=2, size=4, 0.2)
+
+sum(dbinom(c(0, 1, 2), size=4, 0.2))
+```
+
+```{r}
+dataPE <- read.csv("Exam2Prac7.csv")
+```
+
+```{r}
+hist(dataPE$Sample.Data)
+
+```
+
+The above graph is approximately normal
+
+```{r}
+library(car)
+
+qqPlot(dataPE$Sample.Data)
+
+sd(dataPE$Sample.Data)
+```
+
+```{r}
+CI_data(data=dataPE$Sample.Data, PopSDknown="No", PopSDvalue=0, ConfCoef=0.92, digit=4)
+```
+
+```{r}
+pexp(q=5, rate=1/6.25)
+
+qexp(p=0.275, rate=1/6.25)
+
+1-pnorm(q=82, mean=80, sd=1)
+
+1-pnorm(q=0.30, mean=0.27, sd=0.0444)
+```
+
+```{r}
+dataE <- read.csv("Exam2.csv")
+```
+
+```{r}
+hist(dataE$SampleData)
+```
+
+```{r}
+library(car)
+
+qqPlot(dataE$SampleData)
+
+sd(dataE$SampleData)
+```
+
+```{r}
+CI_data(data=dataE$SampleData, PopSDknown="No", PopSDvalue=0, ConfCoef=0.90, digit=4)
+```
+
+```{r}
+
+g <- (89-75)/8
+g
+
+pnorm(q=69, mean=75, sd = 8) - pnorm(q=60, mean=75, sd = 8)
+
+1-pnorm(q=90, mean=75, sd=8)
+
+qnorm(p=0.90, mean=75, sd=8)
+```
+
+```{r}
+dbinom(x=c(0, 1, 2, 3, 4, 5), size=5, p=0.3)
+
+sum(dbinom(x=c(0, 1, 2), size=5, p=0.3))
+```
+
+```{r}
+1-pnorm(q=23, mean=20, sd=2)
+
+pnorm(q=20, mean=20, sd=2)
+
+pnorm(q=23, mean=20, sd=2)-pnorm(q=16, mean=20, sd=2)
+
+0.67*0.33
+
+sqrt((0.67*(1-0.67))/1000)
+
+1-pnorm(q=0.75, mean=0.67, sd=0.01487)
+
+
+```
+
+```{r}
+pbinom(p=0.3,size=5, q=0.7)
+Binom_plotter(5, 0.3,0.16, 0.00)
+
+sqrt(5*0.21)
+```
+
+```{r}
+
+0.3*0.7
+
+sqrt(0.3*0.7*5)
+
+
+SE <- pnorm(q=0.05,mean=0, sd=1)*(20/sqrt(50))
+
+((pnorm(q=0.05,mean=0, sd=1)*20) / SE)^2
+
+sqrt(5*0.3*0.7)
+
+```
+
+## Hypothesis testing
+
+### Practice problems for class
+
+### Question 1.
+
+```{r}
+# question 1
+
+library(BSDA)
+
+zsum.test(mean.x=542, sigma.x = 116, n.x=100, mu=515, alternative="greater", conf.level=0.95)
+
+```
+
+### H0 : $\mu$= 515
+
+### Ha : $\mu$\>515
+
+```{r}
+# question 2
+x <- c(11.4, 13.9, 11.2, 14.5, 15.2, 8.1, 12.4, 8.6, 10.5, 17.1, 9.8, 15.9)
+var<-9
+sd <- 3
+alpha <- 0.01
+
+library(car)
+library(nortest)
+
+qqPlot(x)
+
+ad.test(x)
+
+
+z.test(x=x, alternative="less", mu=15, sigma.x=3, conf.level=0.01)
+
+```
+
+```{r}
+library(BSDA)
+
+z.test(x=x,mu=15, sigma.x=3, alternative="less", conf.level=.99)
+```
+
+c
+
+```{r}
+# question 3
+library(BSDA)
+tsum.test(mean.x=2.2, s.x=6.1, n.x = 76, mu=0, alternative="greater", conf.level=(1-0.05))
+```
+
+```{r}
+
+#question 4
+x<-c(2.6, 3.2, 2.1, 3.0, 3.1, 2.9, 3.7, 2.8)
+qqPlot(x)
+ad.test(x)
+t.test(x=x,mu=3.5, alternative="two.sided", conf.level=0.95)
+```
+
+```{r}
+
+x<-c(13, 108, 53, 45, 57, 44, 46, 58)
+
+qqPlot(x)
+ad.test(x)
+
+# check symmetry with box plot
+boxplot(x)
+
+wilcox.test(x=x, mu=40, alternative="greater", conf.level=0.95)
+```
+
+```{r}
+x<-c(75, 10, 92, 49, 58, 25, 96, 40, 90, 87, 10, 49, 20, 210, 34)
+
+qqPlot(x)
+ad.test(x)
+
+boxplot(x)
+
+SIGN.test(x=x, md=40, alternative="greater", conf.leve=0.95)
+```
+
+```{r}
+
+x<-c(29300, 41500, 40400, 38500, 43500, 37800, 69500, 41200, 38400, 59200)
+y<-c(28800, 41600, 39800, 38500, 42600, 38000, 69200, 40100, 38200, 58500)
+z<-c(500, -100, 600, 0, 900, -200, 300, 1100, 200, 700)
+
+
+```
+
+```         
+Overall notes for quiz 3:
+pvalue < alpha gives evidence to reject
+pvalue >= alpha does not give enough evidence to confirm or deny either
+Type 1 error: occurs if the researcher reject
+probability of a type 1 error is given by alpha
+type 2 error: 
+```
+
+## Quiz 3:
+
+```{r}
+# question 1
+library(BSDA)
+dataQ1 <- read.csv("SAT_Scores_100.csv")
+
+x_bar <- mean(dataQ1$SampleData)
+
+x_bar
+sd <- 116
+
+s <- sd(dataQ1$SampleData)
+s
+
+zsum.test(mean.x=x_bar, sigma.x=sd, n.x=100, mu=525, alternative="greater", conf.level=0.95)
+```
+
+```{r}
+#question 2
+dataQ2 <- read.csv("SAT_Scores_20.csv")
+
+library(car)
+library(nortest)
+
+qqPlot(dataQ2$SampleData)
+
+ad.test(dataQ2$SampleData)
+
+x_bar <- mean(dataQ2$SampleData)
+x_bar
+
+s <- sd(dataQ2$SampleData)
+s
+
+
+tsum.test(mean.x=x_bar, s.x=s, n.x=20, mu=530, alternative="greater", conf.level=0.97)
+```
+
+## Exam 3 - Prac
+
+```{r}
+library(BSDA)
+library(nortest)
+library(carData)
+library(car)
+
+```
+
+Q1:
+
+```{r}
+x1 <- c(62, 75, 170, 47, 47, 81, 58, 2, 43, 52)
+ad.test(x1)
+#p value < 0.05 so we cannot say that this is normal
+
+qqPlot(x1)
+## approximately normal
+boxplot(x1)
+
+SIGN.test(x=x1, y = NULL, md = 70, alternative="less", conf.level=0.90)
+#check if symmetric mean approximately equals median > 0.05 then mean != median
+abs(mean(x1)-median(x1))/abs(mean(x1))
+```
+
+Q2
+
+```{r}
+
+x21 <- c(210, 231, 219, 229, 223, 240, 315)
+x22 <- c(126, 138, 127, 266, 174, 180, 147, 156, 148)
+
+qqPlot(x21)
+qqPlot(x22)
+#since the x21 is less than n = 8
+shapiro.test(x21)
+
+ad.test(x22)
+
+hist(x21)
+hist(x22)
+
+
+wilcox.test(x21, x22, mu=0, alternative="greater")
+```
+
+Q3:
+
+```{r}
+
+# Q3
+x31 <- c(57, 68, 77, 63, 72, 83)
+x32 <- c(73, 69, 87, 69, 86, 84)
+d3 <- x31 - x32
+
+shapiro.test(d3)
+
+# get p value
+t.test(x=d3, mu=0, alternative="less", conf.level=0.95)
+
+# CI interval
+t.test(x=d3, mu=0, alternative="two.sided", conf.level=0.97)
+```
+
+Q4:
+
+```{r}
+dataph <- read.csv("Exam3Prac4.csv")
+x4 <- dataph$SampleData
+
+ad.test(x4)
+
+t.test(x=x4, mu=8.5, alternative="two.sided", conf.level=0.93)
+```
+
+Q5:
+
+```{r}
+
+# no data given just summary stats which leads us to use zsumtest since the data shows normal 
+zsum.test(mean.x=548, sigma.x=116, n.x=80, mu=525, alternative="greater")
+
+# CI
+zsum.test(mean.x=548, sigma.x=116, n.x=80, mu=525, alternative="two.sided", conf.level=0.96)
+```
+
+# Exam 3
+
+Q1
+
+```{r}
+
+x1 <- c(564, 498, 259, 303, 307)
+
+qqPlot(x1)
+shapiro.test(x1)
+
+t.test(x=x1, mu=300, alternative="greater", conf.level = 0.95)
+t.test(x=x1, mu=300, alternative="greater", conf.level = 0.90)
+```
+
+```{r}
+
+x21 <- c(104, 82, 102, 96, 129, 89, 114, 107, 89, 103)
+x22 <- c(103, 103, 91, 113, 102, 103, 92, 90, 114, 113)
+
+dx <- x21 - x22
+
+qqPlot(dx)
+
+ad.test(dx)
+dx
+
+# pvalue from ad test shows greater than alpha so the sample is approximately normal 
+
+t.test(x=dx, mu=0, alternative ="two.sided", conf.level=0.95)
+
+
+```
+
+Q3
+
+```{r}
+
+x31<-c(67, 68, 78, 75, 84)
+x32<-c(59, 63, 81, 74, 78)
+
+diff<- x31 - x32
+
+shapiro.test(diff)
+
+t.test(x=diff, mu=0, alternative="greater", conf.level=0.95)
+
+t.test(x=diff, mu=0, alternative="two.sided", conf.level=0.97)
+```
+
+Q4
+
+```{r}
+datan <- read.csv("Exam3Prob4.csv")
+xn <- datan$SampleData
+
+ad.test(xn)
+
+t.test(x=xn, mu=8.5, alternative="two.sided", conf.level=0.95)
+
+t.test(x=xn, mu=8.5, alternative="two.sided", conf.level=0.93)
+```
+
+Q5
+
+```{r}
+
+zsum.test(mean.x=4.98, sigma.x=1.62, n.x=258, mu=4.7, alternative="greater", conf.level=0.95)
+
+
+zsum.test(mean.x=4.98, sigma.x=1.62, n.x=258, mu=4.7, alternative="two.sided", conf.level=0.96)
+```
+
+# Final Exam
+
+Q
+
+Q22
+
+```{r}
+testData <- read.csv("FinalPrac22.csv")
+
+X <- testData$X
+Y <- testData$Y
+
+mod <- lm(Y~X)
+summary(mod)
+
+anova(mod)
+confint(mod, level=0.95)
+
+cor(X,Y)
+
+predict(mod, newData=testData.frame(X=1.25), level=0.94, interval="confidence")
+predict(mod, newData=testData.frame(X=1.25), level=0.94, interval="predict")
+
+```

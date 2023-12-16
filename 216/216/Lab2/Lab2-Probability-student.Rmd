@@ -1,0 +1,337 @@
+---
+title: "Lab 2: Categorical Variable and Probability"
+author: "Dr. Jiacheng Cai"
+date: "2023-07-09"
+output: 
+  html_document: 
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE,message=FALSE)
+
+library(dplyr)
+
+library(ggplot2)
+library(ggpubr)
+library(flextable)
+library(tidyr)
+```
+
+# Your Name: Cole Barbes
+
+# Introduction
+
+In the Lab 1, we have learned how to obtain the descriptive statistics and graphs for quantitative variables.
+
+In today's lab, we will learn how to obtain the graphical summary of **Categorical Variables**. Furthermore, we will base on the summaries to explore the relationships between two categorical variables using **Probability**.
+
+We will use the Pulse data again today: A medical researcher wants to study the effects of various factors on pulse rates. The researcher records the height, weight, gender, smoking preference, activity level, and resting pulse rate of 92 undergraduate students. The researcher then randomly divides the students into two groups. The first group runs in place for a minute while the other group stands still. Then, the researcher records the students' pulse rates again.
+
+```{r}
+data2 <- read.csv("Pulse.csv")
+```
+
+You should be able to see the object "data2" appeared on the right-top part. You can double click the object "data2" to see the details of the data set.
+
+In this data set, there are 8 variables:
+
+-   Pulse1: The resting pulse of each student
+-   Pulse2: The pulse after running or not running for each student (after treatment)
+-   Ran: Whether or not the student ran in place: 1=Yes or 2=No (treatment)
+-   Smokes: Whether or not the student smokes regularly: 1=Yes or 2=No
+-   Sex: The biological characteristics of males or females of the student: 1=M or 2=F
+-   Height: The height of the student, in inches
+-   Weight: The weight of the student, in pounds
+-   Activity: The usual activity level of the student: 1=Slight, 2=Moderate, or 3=A lot
+
+We will focus on the relationship between **Sex** and **Activity** today.
+
+# Part I: Data Preparing, Tally Tables, and Pie Charts
+
+Notice that the values of variables Sex and Activitiy are listed as 1 or 2, or 3. We first want to change it to a more understandable string values.
+
+For Sex:
+
+```{r}
+data2$Sex[data2$Sex==1]<-'Male'
+data2$Sex[data2$Sex==2]<-'Female'
+```
+
+Do the same thing for Activity:
+
+```{r}
+data2$Activity[data2$Activity==1]<-'Slight'
+data2$Activity[data2$Activity==2]<-'Moderate'
+data2$Activity[data2$Activity==3]<-'A lot'
+```
+
+Now, we want to obtain the tally table of Sex (i.e., how many students are male (or female)). Recall what we have learned in Lab 1.
+
+```{r}
+SexCount <- data2 %>% group_by(Sex) %>%
+  summarise(Count=n())
+
+
+flextable(SexCount)
+```
+
+Sometimes we prefer to obtain the proportion instead of count.
+
+```{r}
+
+SexProportion <- round(SexCount$Count/sum(SexCount$Count),2)
+
+SexStat <- cbind(SexCount,SexProportion)
+flextable(SexStat)
+```
+
+Based on these, we can plot the **Pie Chart** for the Sex:
+
+Again, we use ggplot here. First, the data should be SexStat. We just need the y value as SexProportion and no need for x value. We will fill the part with "Sex". To construct a Pie Chart using ggplot, we need to combine "geom_bar" with "coord_polar". Finally, we want to add some text to present the details count and proportion. The corresponding code is presented below:
+
+```{r}
+
+ggplot(SexStat,aes(x="",y=SexProportion,fill=Sex))+
+  geom_bar(stat="identity")+
+  coord_polar("y",start=0)+
+  theme_void()+
+  geom_text(aes(label=paste("Count=",Count,"  Prop=", scales::percent(SexProportion))),position=position_stack(vjust=0.5))+
+  scale_fill_manual(values=c("lightblue","orange"))
+```
+
+## Assignment 1
+
+1.  Obtain the tally table (including Count and Proportion) for the variable **Activity**.
+
+    ```{r}
+    ActivityCount <- data2 %>% group_by(Activity) %>%
+      summarise(Count=n())
+    ActivityProportion <- round(ActivityCount$Count/sum(ActivityCount$Count),2)
+
+    ActivityStat <- cbind(ActivityCount,ActivityProportion)
+    flextable(ActivityStat)
+    ```
+
+2.  Plot the Pie Chart for Activity. (When copy and paste the above code, don't forget to add another color (Sex has two values but Activity has three))
+
+    ```{r}
+    ggplot(ActivityStat,aes(x="",y=ActivityProportion,fill=Activity))+
+      geom_bar(stat="identity")+
+      coord_polar("y",start=0)+
+      theme_void()+
+      geom_text(aes(label=paste("Count=",Count,"  Prop=", scales::percent(ActivityProportion))),position=position_stack(vjust=0.5))+
+      scale_fill_manual(values=c("lightblue","orange", "green"))
+    ```
+
+**End of Assignment 1**
+
+# Part II: Cross Tabulation and Probability
+
+Now, let's obtain the cross-tabulation for Sex and Activity. A British professor Paul Williamson create a powerful function to easily obtain the cross-tabulation. See the following code:
+
+```{r}
+source("http://pcwww.liv.ac.uk/~william/R/crosstab.r")
+crosstab(data2, row.vars = "Activity", col.vars = "Sex", type = "f")
+
+```
+
+Another way to do this is using the following:
+
+```{r}
+
+CrossCount <- data2 %>% group_by(Sex, Activity) %>%
+  tally()
+# Important: CrossCount object is needed for the bar chart below
+
+CrossCount2 <- data2 %>% group_by(Sex, Activity) %>%
+  tally() %>%
+  spread(Sex,n)
+
+CrossCount2
+
+
+```
+
+A bar chart can summarize the above graphically
+
+```{r}
+ggplot(data=CrossCount, aes(x=Activity, y=n, fill=Sex))+
+  geom_bar(stat="identity",position=position_dodge())+
+  geom_text(aes(label=n), position = position_dodge(0.9), vjust=1.6)
+```
+
+Now, we want to perform the similar operations for **Smokes**.
+
+## Assignment 2
+
+1.  Change the values on the Smokes column based on the following: 1=Yes or 2=No
+
+    ```{r}
+    data2$Smokes[data2$Smokes==1]<-'Yes'
+    data2$Smokes[data2$Smokes==2]<-'No'
+    ```
+
+2.  Obtain the cross-tabulation for Sex and Smokes.
+
+    ```{r}
+    CrossCount <- data2 %>% group_by(Sex, Smokes) %>%
+      tally()
+    # Important: CrossCount object is needed for the bar chart below
+
+    CrossCount2 <- data2 %>% group_by(Sex, Smokes) %>%
+      tally() %>%
+      spread(Sex,n)
+
+    CrossCount2
+
+    ```
+
+3.  Plot the bar chart of Smokes, group by Sex. (Recall that you do need to compute the CrossCount first.
+
+    ```{r}
+    ggplot(data=CrossCount, aes(x=Smokes, y=n, fill=Sex))+
+      geom_bar(stat="identity",position=position_dodge())+
+      geom_text(aes(label=n), position = position_dodge(0.9), vjust=1.6)
+    ```
+
+**End of Assignment 2**
+
+# Part III: Probability
+
+Based on the summaries of Part II, we can compute the probabilities of several events related to Sex and Activity, and furthermore explore their relationships.
+
+We define events
+
+-   F = A randomly selected student is a female.
+
+-   M = A randomly selected student is a male.
+
+-   E1 = A randomly selected student has slight activity level
+
+-   E2 = A randomly selected student has moderate activity level
+
+-   E3 = A randomly selected student has a lot activity level
+
+To present math formula in R markdown, use the following as an example:
+
+Type the following
+
+```         
+P(A)=\frac{1}{4}=0.25
+```
+
+You should be able to see
+
+$$ P(A)=\frac{1}{4}=0.25 $$
+
+The union, intersect, complement notations is given by
+
+```         
+\cup,\cap,^C
+```
+
+Now we want to calculate some probabilities.
+
+The cross tabulation between Activity and Sex is
+
+```{r}
+crosstab(data2, row.vars = "Activity", col.vars = "Sex", type = "f")
+```
+
+What is the probability that a randomly selected student has Slight activity level?
+
+$$
+P(E2)=\frac{10}{92}=0.10869
+$$
+
+What is the probability that a randomly selected student is a female AND has Slight activity level?
+
+$$
+P(F\cap E2)=\frac{4}{92}=0.04348
+$$
+
+What is the probability that a randomly selected student has Slight activity level, given that the student is a female?
+
+$$
+P(E2|F)=\frac{4}{35}=0.11429
+$$
+
+Recall the definition of independent, two events A and B are independent if and only if P(A)=P(A\|B). Then based on the above results, what conclusion can you draw about the relationship between activity level and sex?
+
+Next, we want to explore the relationship between Sex and Smokes. We define the following two events:
+
+-   S = A randomly selected student smokes.
+
+-   NS = A randomly selected student does not smoke.
+
+## Assignment 3
+
+A student is selected at random from the Pulse data set. First, reproduce the cross tabulation between Smokes and Sex using the crosstab function.
+
+```{r}
+crosstab(data2, row.vars = "Smokes", col.vars = "Sex", type = "f")
+```
+
+Answer the following questions:
+
+**1. What is the probability that this student is a male?**
+
+$$
+P(M)=\frac{57}{92}=0.61956522
+$$
+
+**2. What is the probability that this student smokes regularly?**
+
+$$
+P(S)=\frac{28}{92}=0.30434783
+$$
+
+**3. What is the probability that this student is a female and smokes regularly?**
+
+$$
+P(F\cap S)=\frac{8}{92}=0.08695652
+$$
+
+**4. What is the probability that this student is a male and does not smoke regularly?**
+
+$$
+P(M\cap NS)=\frac{37}{92}=0.40217391
+$$
+
+**5. Suppose you know that this student is a female. What is the probability that she smokes regularly?**
+
+$$
+P(S|F)=\frac{8}{35}=0.22857143
+$$
+
+**6. What is the probability that this student is a female given that this student smokes regularly?**
+
+$$
+P(F|S)=\frac{8}{28}=0.28571429
+$$
+
+**7. What is the probability that this student is a male or that this student smokes regularly?**
+
+$$
+P(M\cup S)=\frac{57+28-20}{92}=0.70652174
+$$
+
+**8. What is the probability that this student does not smoke regularly or that this student is a female?**
+
+$$
+P(NS\cup F)=\frac{64+35-27}{92}=0.7826087
+$$
+
+**9. Do you think the table suggests that there is a relationship between gender and smoking habits? Are they independent? Explain.**
+
+There seems to be a relationship between gender and smoking habits. They are dependent. Since the P(M \| S) is not equal to the P(M) and vise versa.
+
+$$
+P(M | S)=\frac{20}{28}=0.71428571
+$$
+
+When you answer the questions, put the word question into the probability notations. Write down the formulas you use if applicable, then write the solutions in both fraction format and decimal format.
+
+**End of Assignment 3**

@@ -1,0 +1,378 @@
+---
+title: "Lab 3: Discrete Random Variables"
+author: "kgteller"
+date: "2023-05-29"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE,message=FALSE)
+
+library(tidyverse)
+library(extraDistr)
+```
+
+```{r}
+Binom_plotter<-function(n,p,lb,ub){
+x<-seq(0,n)
+hx<-dbinom(x,n,p)
+
+
+i<-x>= lb & x<= ub
+
+hxi<-dbinom(x[i],n,p)
+
+
+plot(x,hx,type='h', xlim=c(0,n),ylim=c(0,max(hx)))
+
+
+
+if (lb>=0&lb<=n){
+  abline(v=lb,lty=3,col='blue')
+}
+
+if (ub>=0&ub<=n){
+  abline(v=ub,lty=3,col='blue')
+}
+par(new=T)
+plot(x[i],hxi,type='h', col="red", xlim=c(0,n),ylim=c(0,max(hx)),xlab="",ylab="" )
+
+par(new=F)
+
+
+area <- pbinom(ub, n, p) - pbinom(lb, n, p) + dbinom(lb,n,p)
+result <- paste("P(",lb,"\u2264 X \u2264",ub,") =",
+   signif(area, digits=3), "\n",
+   "n=", n, " p=", p)
+mtext(result,3)
+
+}
+
+```
+
+# Your Name: Cole Barbes
+
+# Discrete Random Variables
+
+Today you will be comparing histograms for a discrete distribution with the histogram of a random sample of size 100 from that discrete distribution. The goal is to see that a histogram of a random sample resembles the probability distribution from which that sample was selected. If the sample sizes are large enough you will see that by looking at the histogram for a random sample from a given distribution, you might be able to identify the distribution from which the sample was taken.
+
+## Some R Background
+
+In the R language for discrete and continuous distributions there are several prefixes fro each distribution that allow us to calculate and visualize different distributions. These four pre-fixes are:
+
+r-Which generates a random sample from the given distribution with certain parameters (ie. runif(), rbinom() )
+
+d-generates the probability density function of a given distribution. This can be used to find $P(X=x)$ for a discrete distribution and the value of the PDF for a continous distribution.
+
+p- generates the cumulative density function of a given distribution. This calculates $P(X\leq x)$ for a given distribution.
+
+q- generates the quantile function for a given distribution. This gives the x value such that $P(X \leq x)=q$ for a given distribution.
+
+## Part 1 The discrete Uniform Distribution
+
+Let a and b be integers, a \< b.The random variable X has the discrete uniform distribution on [a,b] if for each integer k such that $a \leq k \leq b$ the $Pr(X=k)=\frac{1}{b-a+1}$. A notation for this distribution is *dU(1, 30).*
+
+To generate a graph of dU(1,30) we can do the following:
+
+```{r}
+# define the x-axis
+x_uniform<-seq(1,30, length=30)
+
+# calculate the uniform probabilities
+y_uniform<- ddunif(x_uniform,min=1,max=30)
+
+# plot the distribution
+plot(x_uniform,y_uniform, type='h')
+
+```
+
+To calculate a probability of $P(5< X \leq 7)$ we would o the following:
+
+```{r}
+round(pdunif(7,1,30)-pdunif(5,1,30),5)
+
+```
+
+p(X\>5) = 1 - P(x\<=5)
+
+```{r}
+
+```
+
+However, in the case of $P(5\leq X\leq 7)$, we should do some adjustments.
+
+```{r}
+round(pdunif(7,1,30)-pdunif(4,1,30),5)
+```
+
+Now calculate $P(10 < X \leq 18.1)$ and $P(10 \leq X \leq 18.1)$
+
+```{r}
+round(pdunif(18.1,1,30)-pdunif(10, 1, 30), 10)
+
+round(pdunif(18.1, 1, 30)-pdunif(9, 1, 30), 10)
+```
+
+To get a list of random data in R we can do the following:
+
+```{r, echo=TRUE}
+uniform_sample<-rdunif(100,1,30)
+
+```
+
+We can then plot the histogram using the hist function:
+
+```{r}
+# basic plot
+hist(uniform_sample)
+# correct the bining
+hist(uniform_sample, breaks=c(1,6,11,16,21,26,30),xlim=c(1,30))
+```
+
+We can also overlay the distribution over the histogram:
+
+```{r}
+
+a<-1
+b<-30
+x_uniform<-seq(a,b, length=b)
+
+y_uniform<- dunif(x_uniform,min=a,max=b)
+
+
+
+hist(uniform_sample, breaks=c(1,6,11,16,21,26,30),xlim=c(1,30))
+
+for (i in 1:30){
+  segments(i,0,i,1/(b-a), lwd=2)
+}
+
+
+
+
+```
+
+Now create 2 more random samples of 100 and plot their histograms an overlay the distribution:
+
+```{r}
+uniform_sample2<-rdunif(100,1,30)
+uniform_sample3<-rdunif(100,1,30)
+```
+
+```{r}
+a<-1
+b<-30
+x_uniform<-seq(a,b, length=b)
+
+y_uniform<- dunif(x_uniform,min=a,max=b)
+
+
+
+hist(uniform_sample2, breaks=c(1,6,11,16,21,26,30),xlim=c(1,30))
+
+for (i in 1:30){
+  segments(i,0,i,1/(b-a), lwd=2)
+}
+
+a<-1
+b<-30
+x_uniform<-seq(a,b, length=b)
+
+y_uniform<- dunif(x_uniform,min=a,max=b)
+
+
+
+hist(uniform_sample3, breaks=c(1,6,11,16,21,26,30),xlim=c(1,30))
+
+for (i in 1:30){
+  segments(i,0,i,1/(b-a), lwd=2)
+}
+
+
+
+
+```
+
+### Assignment 1
+
+Now Take three samples from the uniform distribution $dU(1,30)$ but this time make the sample size 1000. Create histograms for each sample and overlay the distribution.
+
+```{r}
+# define the x-axis
+x_uniform<-seq(1,30, length=30)
+
+# calculate the uniform probabilities
+y_uniform<- ddunif(x_uniform,min=1,max=30)
+
+uniform_sample4<-rdunif(1000,1,30)
+uniform_sample5<-rdunif(1000,1,30)
+uniform_sample6<-rdunif(1000,1,30)
+
+hist(uniform_sample4, breaks=c(1,6,11,16,21,26,30),xlim=c(1,30))
+
+for (i in 1:30){
+  segments(i,0,i,1/(30-1), lwd=2)
+}
+
+hist(uniform_sample5, breaks=c(1,6,11,16,21,26,30),xlim=c(1,30))
+
+for (i in 1:30){
+  segments(i,0,i,1/(30-1), lwd=2)
+}
+
+hist(uniform_sample6, breaks=c(1,6,11,16,21,26,30),xlim=c(1,30))
+
+for (i in 1:30){
+  segments(i,0,i,1/(30-1), lwd=2)
+}
+```
+
+Discuss how the histograms of the samples of size 100 and 1000 compare to the actual distribution of dU(1,30):
+
+```         
+The samples of size 100 seem to be farther skewed from the actual distribution than the samples of 1000. The samples of 1000 seem to be closer to the actual distribution. 
+```
+
+**End Assignment 1**
+
+## Part II Binomial Distribution
+
+Now suppose the random variable X has the binomial distribution Bin(n, p) with n, the number of trials and p, the probability of success on a given trial.The random variable X counts the number of successes. Suppose n = 36 and p = .35 and we want to visualize the probability of getting between 15 and 22 successes. That is finding $P(15 \leq X \leq 22)$. We can do this using the Binom_plotter function defined above. This function takes in the number of successes trials n, the probability of success p, a lower bound and an upper bound. Here is how we can use that function:
+
+```{r}
+Binom_plotter(36,.35,15,22)
+```
+
+what if P(15\<X\<=22
+
+```{r}
+Binom_plotter(36, 0.35, 16, 22)
+```
+
+What if P(15\<= X \< 22)
+
+```{r}
+Binom_plotter(36, 0.35, 15, 21)
+```
+
+What if P(X\>=22)
+
+```{r}
+Binom_plotter(36, 0.35, 22, 1000000)
+```
+
+What if P(X \>22)
+
+```{r}
+Binom_plotter(36, 0.35, 23, 100000)
+```
+
+### Assignment 2
+
+Now lets look at the binomial distribution for different values of p. we will fix the number of trials n=36 and vary the value of p:
+
+```{r}
+n<-36
+p<-seq(.1,.9,by=.05)
+x<-seq(0,36)
+for (i in 1:length(p)){plot(x,dbinom(x,n,p[i]),type="h",main=substitute(paste("n=36 p= ",a),list(a=p[i])))}
+
+```
+
+Describe the distributions as skewed left, symmetric or skewed right for the different values of *p.* For what values of *p* is the distribution approximately symmetric? For what values of p is the distribution skewed right?
+
+```         
+For p < 0.5, the distribution seems to be skewed right. For p = 0.5, the distribution is symmetric. For p > 0.5, the distribution seems to be skewed left. 
+```
+
+Now lets practice finding some probabilities from the binomial distribution with n=36 and p=.35:
+
+Find $P(X \geq 17)$
+
+```{r}
+Binom_plotter(36, 0.35, 17, 100000)
+```
+
+Find $P(X \geq 17.4)$ and $P(X \geq 17.6)$
+
+```{r}
+Binom_plotter(36, 0.35, 17.4, 100000)
+Binom_plotter(36, 0.35, 17.6, 100000)
+```
+
+Is there any difference in the late 2 probabilities? why or why not?
+
+```         
+There is no difference in the last 2 probabilities because they are both within the same bound.
+```
+
+**End Assignment 2**
+
+## Part III Poisson Distribution
+
+Now suppose X has the Poisson distribution. This distribution expresses the probability of a given number of events occurring in a fixed interval of time; e.g. the number Geiger counter clicks heard in 10 seconds; the number $\lambda$is the mean number of events observed in the fixed interval.
+
+In R we can use the prefixes defined above in front of pois to get probabilities and random values from a poisson distribution.
+
+For a Poisson distribution the commands would be:
+
+rpois(n,lambda)-Which generates a random sample from the Poisson distribution
+
+dpois(x,lambda)-generates $P(X=x)$ for the Poisson distribution
+
+ppois(q,lambda)- calculates $P(X\leq x)$ for a Poisson distribution.
+
+qpois(p,lambda)- This gives the x value such that $P(X \leq x)=p$ for a Poisson distribution.
+
+### Assignment 3
+
+suppose $\lambda=2.2$ Find $P(X>3)$ and $P(2.2< X < 5.1)$
+
+```{r}
+round(1-ppois(3, 2.2), 10)
+round(ppois(5, 2.2)-ppois(2.2, 2.2), 10)
+```
+
+Now experiment with the parameter $\lambda$ like we did for p in the binomial distribution above. for what values of $\lambda$ is the distribution right-skewed?
+
+```{r}
+lamb<-seq(2.2, 36,by=2.2)
+x<-seq(0,36)
+for (i in 1:length(lamb)){plot(x,dpois(x,lamb[i]),type="h",main=substitute(paste("n=36 p= ",a),list(a=lamb[i])))}
+```
+
+```         
+For all values of lambda, The data is skewed right.
+```
+
+**End Assignment 3**
+
+## Part IV Matching distributions
+
+### Assignment 4
+
+In the file titled Samples2.csv there are three columns of data that come from three different distribution. the columns are labeled Sample_1, Sample_2, and Sample_3. They each contain data from different distributions. The three possible distributions are dU(0,20), Bin(50,.6), and Pois(10). Match each sample with the distribution it came from using histograms and descriptive statistics.
+
+```{r}
+data0 <- read.csv("Samples2.csv")
+
+
+hist(data0$Sample_1) 
+
+
+hist(data0$Sample_2)
+
+hist(data0$Sample_3)
+
+
+
+```
+
+```         
+The Sample 1 is the Bin(50, .6) since the data is within 50 and the mean of the binomial is n*p and in this case would be 30 which matches this graph. The sample 2 is the pois function since the mean is 10 and matches the graph. The sample 3 is the uniform distribution dU(0, 20).
+```
+
+**End Assignment 4**

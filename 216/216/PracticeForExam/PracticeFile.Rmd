@@ -1,0 +1,116 @@
+---
+title: "PracticeForExam"
+author: "Cole Barbes"
+date: "2023-10-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+# Example 1
+
+```{r}
+# a. z score 
+mean <- 69
+variance <- 9
+sd <- sqrt(9)
+zscore <- (63-mean)/sd
+
+# b. 
+z <- 0.6
+x<-z*sd+mean
+
+# c. p[x>72] = 1 - P[x<=72]
+1-pnorm(q=72, mean=69, sd=3)
+
+# d. p[x<x0] = 0.20 p[x<x0]
+qnorm(p=0.80, mean=69, sd=3)
+```
+
+# Example 2
+
+```{r}
+
+pnorm(q=90, mean=80.5, sd=9.9)-pnorm(q=75, mean=80.5, sd=9.9)
+
+#p[x>90]= 1-p[x<=90]
+1-pnorm(q=90, mean=80.5, sd=9.9)
+
+#p[x<65]=?
+pnorm(q=65, mean=80.5, sd=9.9)
+
+#p[x<q] = 0.72
+qnorm(p=0.72, mean=80.5, sd=9.9)
+
+qnorm(p=0.95, mean=80.5, sd=9.9)
+
+```
+
+# Example 3
+
+```{r}
+
+mean <- 2631
+sd <- 500
+size <- 100
+sds <- sd/sqrt(100)
+
+# probability that the sample mean rent is greater than 2700
+# p[x>2700] = 1-p[x<=2700]
+1-pnorm(2700, mean, sds)
+
+#probability that the sample mean rent is bet 2500 and 2700
+pnorm(2600, mean, sds)-pnorm(2500, mean, sds)
+
+# c
+qnorm(0.60, mean, sds)
+
+#d
+1-pnorm(2800, mean, sds)
+
+#e
+1-pnorm(2800, mean, 500)
+
+```
+
+# Example 4
+
+```{r}
+# a and b
+mu<-0.73
+sdphat <-sqrt((0.73*0.27)/150)
+print(mu)
+print(sdphat)
+
+#c. 
+
+1-pnorm(q=0.70, mu, sdphat)
+
+#d
+pnorm(q=0.80, mu, sdphat) - pnorm(q=0.76, mu, sdphat)
+
+#e
+pnorm(0.68, mu, sdphat)
+```
